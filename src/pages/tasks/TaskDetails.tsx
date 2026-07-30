@@ -227,6 +227,7 @@ const TaskDetails = () => {
                 />
                 <div>
                   <p className="text-sm font-semibold text-slate-900">{assignee.name}</p>
+                  <p className="text-xs text-slate-500">{assignee.role}</p>
                 </div>
               </div>
             ) : (

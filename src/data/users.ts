@@ -4,31 +4,31 @@ export const users: User[] = [
 	{
 		id: 1,
 		name: "Tswarelo",
-		role: "Product Designer",
+		role: "AI Fullstack Developer",
 		avatar: "https://i.pravatar.cc/100?img=12",
 	},
 	{
 		id: 2,
 		name: "Noluthando",
-		role: "Frontend Engineer",
+		role: "AI Fullstack Developer",
 		avatar: "https://i.pravatar.cc/100?img=32",
 	},
 	{
 		id: 3,
 		name: "Nyiko",
-		role: "Backend Engineer",
+		role: "AI Fullstack Developer",
 		avatar: "https://i.pravatar.cc/100?img=15",
 	},
 	{
 		id: 4,
 		name: "Thandokuhle",
-		role: "QA Engineer",
+		role: "AI Fullstack Developer",
 		avatar: "https://i.pravatar.cc/100?img=51",
 	},
 	{
 		id: 5,
 		name: "qiyaam",
-		role: "Project Coordinator",
+		role: "AI Fullstack Developer",
 		avatar: "https://i.pravatar.cc/100?img=68",
 	},
 ];
