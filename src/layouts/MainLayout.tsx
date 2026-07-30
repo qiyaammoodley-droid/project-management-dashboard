@@ -1,25 +1,33 @@
+import type { ReactNode } from "react";
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
-import Footer from "../components/layout/Footer";
 
-type MainLayoutProps = {
-  children: React.ReactNode;
-};
+interface MainLayoutProps {
+  children: ReactNode;
+}
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
+    <div className="min-h-screen bg-[#F5F7FA] p-6">
+      <div className="flex h-[calc(100vh-48px)] overflow-hidden rounded-[30px] bg-white shadow-lg">
 
-      <div className="flex flex-1">
+        {/* Sidebar */}
         <Sidebar />
 
-        <main className="flex-1 p-6">
-          {children}
-        </main>
-      </div>
+        {/* Right Content */}
+        <div className="flex flex-1 flex-col overflow-hidden">
 
-      <Footer />
+          {/* Navbar */}
+          <Navbar />
+
+          {/* Page Content */}
+          <main className="flex-1 overflow-y-auto bg-[#F5F7FA] p-8">
+            {children}
+          </main>
+
+        </div>
+
+      </div>
     </div>
   );
 };
