@@ -1,93 +1,83 @@
-import { Link } from "react-router-dom";
-import { CalendarDays, UserRound } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { CalendarDays, FolderKanban, Plus } from "lucide-react";
 
-import { users } from "../data/users";
-import useTasks from "../hooks/useTasks";
+import useProjects from "../hooks/useProjects";
 import MainLayout from "../layouts/MainLayout";
 import PageHeader from "../components/ui/PageHeader";
 import Card from "../components/ui/Card";
-import Badge from "../components/ui/Badge";
+import Button from "../components/ui/Button";
 
 const Projects = () => {
-  const { tasks, isReady } = useTasks();
-
-  const resolveTaskStatus = (
-    status: "To Do" | "In Progress" | "In Review" | "Completed"
-  ): "Completed" | "In Progress" | "Pending" => {
-    if (status === "Completed") {
-      return "Completed";
-    }
-
-    if (status === "In Progress") {
-      return "In Progress";
-    }
-
-    return "Pending";
-  };
+  const navigate = useNavigate();
+  const { projects, isReady } = useProjects();
 
   return (
     <MainLayout>
       <PageHeader
         title="Projects"
-        subtitle="Track all created tasks and progress in one place"
+        subtitle="Create and manage your project containers"
+        action={
+          <Button onClick={() => navigate("/projects/new")}>
+            <Plus size={16} />
+            Add Project
+          </Button>
+        }
       />
 
       {!isReady ? (
         <Card className="border-emerald-100">
           <p className="text-sm text-slate-600">Loading projects...</p>
         </Card>
-      ) : !tasks.length ? (
+      ) : !projects.length ? (
         <Card className="border-emerald-100">
-          <h2 className="text-xl font-semibold text-slate-900">No Tasks Created Yet</h2>
+          <h2 className="text-xl font-semibold text-slate-900">No Projects Yet</h2>
           <p className="mt-2 text-sm text-slate-500">
-            Add tasks from the task page and they will appear here automatically.
+            Create a project first, then add tasks under that project.
           </p>
           <Link
-            to="/tasks/1"
+            to="/projects/new"
             className="mt-5 inline-flex rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
           >
-            Go To Task Form
+            Create Project
           </Link>
         </Card>
       ) : (
         <section className="grid gap-4 md:grid-cols-2">
-          {tasks.map((task) => {
-            const assignee = users.find((user) => user.id === task.assignedTo);
-
+          {projects.map((project) => {
             return (
               <Card
-                key={task.id}
+                key={project.id}
                 className="border-emerald-100 p-5 hover:shadow-emerald-100"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900">{task.title}</h3>
+                    <h3 className="text-lg font-semibold text-slate-900">{project.name}</h3>
                     <p className="mt-1 text-sm text-slate-500">
-                      {task.description || "No description"}
+                      {project.description || "No description"}
                     </p>
                   </div>
-                  <Badge status={resolveTaskStatus(task.status)} />
+                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    {project.status}
+                  </span>
                 </div>
 
                 <div className="mt-4 space-y-2 text-sm text-slate-600">
                   <div className="flex items-center gap-2">
-                    <UserRound size={15} className="text-emerald-600" />
-                    <span>
-                      {assignee ? `${assignee.name} - ${assignee.role}` : "Unassigned"}
-                    </span>
+                    <FolderKanban size={15} className="text-emerald-600" />
+                    <span>Progress: {project.progress}%</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <CalendarDays size={15} className="text-emerald-600" />
-                    <span>{task.dueDate || "No due date"}</span>
+                    <span>{project.deadline || "No deadline"}</span>
                   </div>
                 </div>
 
                 <Link
-                  to={`/tasks/${task.id}`}
+                  to={`/projects/${project.id}`}
                   className="mt-5 inline-flex text-sm font-semibold text-emerald-700 underline"
                 >
-                  Open Task Details
+                  Open Project
                 </Link>
               </Card>
             );

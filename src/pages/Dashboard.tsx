@@ -6,11 +6,13 @@ import {
   Plus,
   Upload,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 import PageHeader from "../components/ui/PageHeader";
 import Button from "../components/ui/Button";
 import StatCard from "../components/ui/StatCard";
+import useProjects from "../hooks/useProjects";
 import useTasks from "../hooks/useTasks";
 
 import ProjectAnalytics from "../components/dashboard/ProjectAnalytics";
@@ -19,6 +21,8 @@ import UpcomingTasks from "../components/dashboard/UpcomingTasks";
 import TeamPerformance from "../components/dashboard/TeamPerformance";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const { projects } = useProjects();
   const { tasks } = useTasks();
 
   return (
@@ -28,7 +32,7 @@ const Dashboard = () => {
         subtitle="Plan, prioritize, and accomplish your tasks with ease."
         action={
           <div className="flex items-center gap-3">
-            <Button>
+            <Button onClick={() => navigate("/projects/new")}>
               <Plus size={16} />
               Add Project
             </Button>
@@ -44,8 +48,8 @@ const Dashboard = () => {
         <StatCard
           featured
           title="Total Projects"
-          value="24"
-          change="Increased from last month"
+          value={projects.length}
+          change={projects.length ? "Live project count" : "No projects yet"}
           icon={<FolderKanban size={28} />}
         />
 
