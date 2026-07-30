@@ -7,6 +7,7 @@ interface StatCardProps {
   icon: ReactNode;
   change: string;
   positive?: boolean;
+  featured?: boolean;
 }
 
 const StatCard = ({
@@ -15,35 +16,56 @@ const StatCard = ({
   icon,
   change,
   positive = true,
+  featured = false,
 }: StatCardProps) => {
   return (
-    <Card className="transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+    <Card
+      className={`transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+        featured
+          ? "border-0 bg-gradient-to-br from-violet-600 via-violet-600 to-pink-500 text-white"
+          : "bg-white"
+      }`}
+    >
       <div className="flex items-start justify-between">
-
         <div>
-          <p className="text-sm font-medium text-gray-500">
+          <p
+            className={`text-sm font-medium ${
+              featured ? "text-violet-100" : "text-gray-500"
+            }`}
+          >
             {title}
           </p>
 
-          <h2 className="mt-2 text-4xl font-bold text-gray-900">
+          <h2
+            className={`mt-3 text-4xl font-bold ${
+              featured ? "text-white" : "text-gray-900"
+            }`}
+          >
             {value}
           </h2>
 
           <p
-            className={`mt-3 text-sm font-medium ${
-              positive
-                ? "text-green-600"
-                : "text-red-500"
+            className={`mt-4 text-sm font-medium ${
+              featured
+                ? "text-pink-100"
+                : positive
+                ? "text-emerald-600"
+                : "text-rose-500"
             }`}
           >
             {change}
           </p>
         </div>
 
-        <div className="rounded-2xl bg-teal-100 p-4 text-teal-700">
+        <div
+          className={`rounded-2xl p-4 ${
+            featured
+              ? "bg-white/20 text-white"
+              : "bg-violet-100 text-violet-700"
+          }`}
+        >
           {icon}
         </div>
-
       </div>
     </Card>
   );

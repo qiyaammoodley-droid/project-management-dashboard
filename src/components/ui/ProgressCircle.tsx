@@ -6,46 +6,52 @@ const ProgressCircle = ({ value }: ProgressCircleProps) => {
   const radius = 60;
   const stroke = 10;
 
-  const normalizedRadius = radius - stroke * 0.5;
-
+  const normalizedRadius = radius - stroke / 2;
   const circumference = normalizedRadius * 2 * Math.PI;
 
   const strokeDashoffset =
     circumference - (value / 100) * circumference;
 
   return (
-    <div className="flex justify-center">
+    <div className="relative flex h-[120px] w-[120px] items-center justify-center">
       <svg
-        height={radius * 2}
-        width={radius * 2}
+        width={120}
+        height={120}
         className="-rotate-90"
       >
+        {/* Background */}
         <circle
-          stroke="#E5E7EB"
-          fill="transparent"
-          strokeWidth={stroke}
+          cx="60"
+          cy="60"
           r={normalizedRadius}
-          cx={radius}
-          cy={radius}
+          stroke="#F3E8FF"
+          strokeWidth={stroke}
+          fill="none"
         />
 
+        {/* Progress */}
         <circle
-          stroke="#0F766E"
-          fill="transparent"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={`${circumference} ${circumference}`}
-          style={{
-            strokeDashoffset,
-          }}
+          cx="60"
+          cy="60"
           r={normalizedRadius}
-          cx={radius}
-          cy={radius}
+          stroke="url(#gradient)"
+          strokeWidth={stroke}
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
         />
+
+        <defs>
+          <linearGradient id="gradient">
+            <stop offset="0%" stopColor="#7C3AED" />
+            <stop offset="100%" stopColor="#EC4899" />
+          </linearGradient>
+        </defs>
       </svg>
 
-      <div className="absolute flex h-[120px] w-[120px] items-center justify-center">
-        <span className="text-2xl font-bold text-gray-900">
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-3xl font-bold text-gray-900">
           {value}%
         </span>
       </div>

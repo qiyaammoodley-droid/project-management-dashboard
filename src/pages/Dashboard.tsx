@@ -10,7 +10,10 @@ import MainLayout from "../layouts/MainLayout";
 import PageHeader from "../components/ui/PageHeader";
 import Button from "../components/ui/Button";
 import StatCard from "../components/ui/StatCard";
-import ProjectProgress from "../components/dashboard/ProjectProgress";
+
+import ProjectAnalytics from "../components/dashboard/ProjectAnalytics";
+import RecentProjects from "../components/dashboard/RecentProjects";
+import UpcomingTasks from "../components/dashboard/UpcomingTasks";
 import TeamPerformance from "../components/dashboard/TeamPerformance";
 
 const Dashboard = () => {
@@ -27,9 +30,9 @@ const Dashboard = () => {
         }
       />
 
-      {/* Stats */}
-      <section className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
+          featured
           title="Projects"
           value="24"
           change="+12% this month"
@@ -59,10 +62,16 @@ const Dashboard = () => {
         />
       </section>
 
-      {/* Dashboard Widgets */}
-      <section className="mt-8 grid gap-6 lg:grid-cols-2">
-        <ProjectProgress />
-        <TeamPerformance />
+      <section className="mt-10 grid gap-8 xl:grid-cols-3">
+        <div className="space-y-8 xl:col-span-2">
+          <ProjectAnalytics />
+          <RecentProjects />
+        </div>
+
+        <div className="space-y-8">
+          <TeamPerformance />
+          <UpcomingTasks />
+        </div>
       </section>
     </MainLayout>
   );
