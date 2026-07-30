@@ -5,8 +5,7 @@ export const tasks: Task[] = [
 		id: 101,
 		projectId: 1,
 		title: "Design task card interactions",
-		description:
-			"Create hover states and quick actions for task cards in the dashboard board view.",
+		description: "",
 		priority: "High",
 		status: "In Progress",
 		assignedTo: 2,

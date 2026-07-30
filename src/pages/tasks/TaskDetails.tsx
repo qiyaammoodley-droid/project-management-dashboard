@@ -142,7 +142,6 @@ const TaskDetails = () => {
     return (
       <MainLayout>
         <section className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">No tasks yet</h2>
           <TaskForm users={users} onSubmit={handleCreateTask} className="mt-6" />
         </section>
       </MainLayout>
@@ -228,11 +227,10 @@ const TaskDetails = () => {
                 />
                 <div>
                   <p className="text-sm font-semibold text-slate-900">{assignee.name}</p>
-                  <p className="text-xs text-slate-500">{assignee.role}</p>
                 </div>
               </div>
             ) : (
-              <p className="mt-2 text-sm text-slate-500">No assignee selected.</p>
+              <p className="mt-2 text-sm text-slate-500">-</p>
             )}
           </div>
         </section>
