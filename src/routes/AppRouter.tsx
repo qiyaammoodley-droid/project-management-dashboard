@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
 import Projects from "../pages/Projects";
 import ProjectDetails from "../pages/ProjectDetails";
-import TaskDetails from "../pages/TaskDetails";
+import TaskDetails from "../pages/tasks/TaskDetails";
 
 const AppRouter = () => {
   return (
