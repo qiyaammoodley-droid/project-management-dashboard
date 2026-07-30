@@ -1,6 +1,5 @@
 import {
   LayoutDashboard,
-  FolderKanban,
   CheckSquare,
   CalendarDays,
   BarChart3,
@@ -14,35 +13,29 @@ import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const navItem =
-    "flex items-center gap-3 rounded-2xl px-4 py-3 font-medium text-gray-600 transition-all duration-300 hover:bg-violet-50 hover:text-violet-700";
+    "group flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium text-slate-500 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700";
 
   const activeNav =
-    "bg-gradient-to-r from-violet-600 to-pink-500 text-white shadow-lg hover:text-white hover:from-violet-600 hover:to-pink-500";
+    "bg-emerald-50 text-emerald-700";
 
   return (
-    <aside className="flex h-full w-72 flex-col justify-between border-r border-violet-100 bg-white p-6">
+    <aside className="flex h-full w-[250px] flex-col justify-between border-r border-slate-100 bg-white p-5">
       {/* Logo */}
       <div>
-        <div className="mb-12 flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-pink-500 text-xl font-bold text-white shadow-lg">
-            G
+        <div className="mb-10 flex items-center gap-3 px-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-emerald-500 text-emerald-600">
+            <LayoutDashboard size={17} />
           </div>
 
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Gemini
-            </h1>
-
-            <p className="text-sm text-gray-500">
-              Project Manager
-            </p>
+            <h1 className="text-lg font-semibold text-slate-900">Donezo</h1>
           </div>
         </div>
 
         {/* Main Menu */}
         <div>
-          <p className="mb-4 px-2 text-xs font-semibold uppercase tracking-[0.25em] text-gray-400">
-            Main Menu
+          <p className="mb-3 px-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+            Menu
           </p>
 
           <nav className="space-y-2">
@@ -52,18 +45,15 @@ const Sidebar = () => {
                 `${navItem} ${isActive ? activeNav : ""}`
               }
             >
-              <LayoutDashboard size={20} />
-              Dashboard
-            </NavLink>
-
-            <NavLink
-              to="/projects"
-              className={({ isActive }) =>
-                `${navItem} ${isActive ? activeNav : ""}`
-              }
-            >
-              <FolderKanban size={20} />
-              Projects
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={`h-5 w-1 rounded-full ${isActive ? "bg-emerald-600" : "bg-transparent"}`}
+                  />
+                  <LayoutDashboard size={17} />
+                  Dashboard
+                </>
+              )}
             </NavLink>
 
             <NavLink
@@ -72,46 +62,79 @@ const Sidebar = () => {
                 `${navItem} ${isActive ? activeNav : ""}`
               }
             >
-              <CheckSquare size={20} />
-              Tasks
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={`h-5 w-1 rounded-full ${isActive ? "bg-emerald-600" : "bg-transparent"}`}
+                  />
+                  <CheckSquare size={17} />
+                  Tasks
+                  <span className="ml-auto rounded bg-emerald-600/10 px-1.5 py-0.5 text-[10px] text-emerald-700">
+                    124
+                  </span>
+                </>
+              )}
             </NavLink>
 
             <button className={`${navItem} w-full`}>
-              <CalendarDays size={20} />
+              <span className="h-5 w-1 rounded-full bg-transparent" />
+              <CalendarDays size={17} />
               Calendar
             </button>
 
             <button className={`${navItem} w-full`}>
-              <BarChart3 size={20} />
+              <span className="h-5 w-1 rounded-full bg-transparent" />
+              <BarChart3 size={17} />
               Analytics
             </button>
 
             <button className={`${navItem} w-full`}>
-              <Users size={20} />
+              <span className="h-5 w-1 rounded-full bg-transparent" />
+              <Users size={17} />
               Team
             </button>
+
+            <NavLink
+              to="/projects"
+              className={({ isActive }) =>
+                `${navItem} ${isActive ? activeNav : ""}`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={`h-5 w-1 rounded-full ${isActive ? "bg-emerald-600" : "bg-transparent"}`}
+                  />
+                  <BarChart3 size={17} />
+                  Projects
+                </>
+              )}
+            </NavLink>
           </nav>
         </div>
 
         {/* General */}
-        <div className="mt-12">
-          <p className="mb-4 px-2 text-xs font-semibold uppercase tracking-[0.25em] text-gray-400">
+        <div className="mt-10">
+          <p className="mb-3 px-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
             General
           </p>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <button className={`${navItem} w-full`}>
-              <Settings size={20} />
+              <span className="h-5 w-1 rounded-full bg-transparent" />
+              <Settings size={17} />
               Settings
             </button>
 
             <button className={`${navItem} w-full`}>
-              <HelpCircle size={20} />
+              <span className="h-5 w-1 rounded-full bg-transparent" />
+              <HelpCircle size={17} />
               Help
             </button>
 
-            <button className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 font-medium text-rose-500 transition-all duration-300 hover:bg-rose-50">
-              <LogOut size={20} />
+            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 font-medium text-slate-500 transition-all duration-200 hover:bg-slate-100">
+              <span className="h-5 w-1 rounded-full bg-transparent" />
+              <LogOut size={17} />
               Logout
             </button>
           </div>
@@ -119,18 +142,20 @@ const Sidebar = () => {
       </div>
 
       {/* Download Card */}
-      <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-violet-700 via-violet-600 to-pink-500 p-6 text-white shadow-xl">
-        <Download size={30} className="mb-5" />
+      <div className="overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_20%_0%,#0d4f36_0%,#08251a_70%)] p-4 text-white shadow-sm">
+        <Download size={22} className="mb-3 text-emerald-300" />
 
-        <h2 className="text-xl font-bold">
-          Gemini Desktop
+        <h2 className="text-lg font-semibold">
+          Download our
+          <br />
+          Mobile App
         </h2>
 
-        <p className="mt-3 text-sm leading-6 text-violet-100">
-          Install the desktop app and manage your projects from anywhere.
+        <p className="mt-2 text-xs leading-5 text-emerald-100">
+          Get updates on the go.
         </p>
 
-        <button className="mt-6 w-full rounded-2xl bg-white py-3 font-semibold text-violet-700 transition-all duration-300 hover:scale-[1.02] hover:bg-violet-50">
+        <button className="mt-4 w-full rounded-xl bg-emerald-500 py-2 text-sm font-semibold text-white transition-all hover:bg-emerald-400">
           Download
         </button>
       </div>

@@ -12,13 +12,13 @@ const PageHeader = ({
   action,
 }: PageHeaderProps) => {
   return (
-    <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+    <div className="mb-5 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-4xl font-bold tracking-tight text-slate-900">
           {title}
         </h1>
 
-        <p className="mt-1 text-gray-500">
+        <p className="mt-1 text-sm text-slate-400">
           {subtitle}
         </p>
       </div>

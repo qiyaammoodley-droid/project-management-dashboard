@@ -10,8 +10,8 @@ const Card = ({ children, className }: CardProps) => {
   return (
     <div
       className={clsx(
-        "rounded-[28px] border border-violet-100 bg-white p-6 shadow-sm transition-all duration-300",
-        "hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-100/60",
+        "rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300",
+        "hover:shadow-md",
         className
       )}
     >

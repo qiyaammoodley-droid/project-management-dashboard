@@ -1,7 +1,12 @@
 import AppRouter from "./routes/AppRouter";
+import { TaskProvider } from "./context/TaskContext";
 
 function App() {
-  return <AppRouter />;
+  return (
+    <TaskProvider>
+      <AppRouter />
+    </TaskProvider>
+  );
 }
 
 export default App;

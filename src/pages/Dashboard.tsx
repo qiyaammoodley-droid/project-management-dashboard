@@ -5,11 +5,13 @@ import {
   Clock3,
   Plus,
 } from "lucide-react";
+import { useMemo } from "react";
 
 import MainLayout from "../layouts/MainLayout";
 import PageHeader from "../components/ui/PageHeader";
 import Button from "../components/ui/Button";
 import StatCard from "../components/ui/StatCard";
+import useTasks from "../hooks/useTasks";
 
 import ProjectAnalytics from "../components/dashboard/ProjectAnalytics";
 import RecentProjects from "../components/dashboard/RecentProjects";
@@ -17,6 +19,23 @@ import UpcomingTasks from "../components/dashboard/UpcomingTasks";
 import TeamPerformance from "../components/dashboard/TeamPerformance";
 
 const Dashboard = () => {
+  const { tasks } = useTasks();
+
+  const dueThisWeek = useMemo(() => {
+    const now = new Date();
+    const weekFromNow = new Date();
+    weekFromNow.setDate(now.getDate() + 7);
+
+    return tasks.filter((task) => {
+      if (!task.dueDate) {
+        return false;
+      }
+
+      const due = new Date(task.dueDate);
+      return due >= now && due <= weekFromNow;
+    }).length;
+  }, [tasks]);
+
   return (
     <MainLayout>
       <PageHeader
@@ -41,8 +60,8 @@ const Dashboard = () => {
 
         <StatCard
           title="Tasks"
-          value="186"
-          change="+24 tasks"
+          value={tasks.length}
+          change={tasks.length ? "Live task count" : "No tasks yet"}
           icon={<CheckSquare size={28} />}
         />
 
@@ -55,9 +74,9 @@ const Dashboard = () => {
 
         <StatCard
           title="Due This Week"
-          value="8"
-          change="-2 from last week"
-          positive={false}
+          value={dueThisWeek}
+          change={dueThisWeek ? "Upcoming deadlines" : "No upcoming deadlines"}
+          positive={dueThisWeek > 0}
           icon={<Clock3 size={28} />}
         />
       </section>

@@ -22,7 +22,7 @@ const StatCard = ({
     <Card
       className={`transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
         featured
-          ? "border-0 bg-gradient-to-br from-violet-600 via-violet-600 to-pink-500 text-white"
+          ? "border-0 bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-500 text-white"
           : "bg-white"
       }`}
     >
@@ -30,7 +30,7 @@ const StatCard = ({
         <div>
           <p
             className={`text-sm font-medium ${
-              featured ? "text-violet-100" : "text-gray-500"
+              featured ? "text-emerald-100" : "text-gray-500"
             }`}
           >
             {title}
@@ -47,7 +47,7 @@ const StatCard = ({
           <p
             className={`mt-4 text-sm font-medium ${
               featured
-                ? "text-pink-100"
+                ? "text-emerald-100"
                 : positive
                 ? "text-emerald-600"
                 : "text-rose-500"
@@ -61,7 +61,7 @@ const StatCard = ({
           className={`rounded-2xl p-4 ${
             featured
               ? "bg-white/20 text-white"
-              : "bg-violet-100 text-violet-700"
+              : "bg-emerald-100 text-emerald-700"
           }`}
         >
           {icon}

@@ -2,41 +2,45 @@ import { Bell, Mail, Search } from "lucide-react";
 
 const Navbar = () => {
   return (
-    <header className="flex h-20 items-center justify-between border-b border-violet-100 bg-white px-8">
-      <div className="relative w-full max-w-md">
+    <header className="flex h-20 items-center justify-between border-b border-emerald-50 bg-white px-5 md:px-8">
+      <div className="relative w-full max-w-lg">
         <Search
           size={18}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-violet-400"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
         />
 
         <input
           type="text"
-          placeholder="Search projects, tasks..."
-          className="w-full rounded-2xl border border-violet-100 bg-violet-50 py-3 pl-11 pr-4 text-sm outline-none transition-all duration-300 focus:border-violet-500 focus:bg-white"
+          placeholder="Search task"
+          className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-24 text-sm text-slate-700 outline-none transition-all duration-300 focus:border-emerald-400 focus:bg-white"
         />
+
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-500">
+          Ctrl F
+        </span>
       </div>
 
       <div className="flex items-center gap-4">
-        <button className="rounded-2xl bg-violet-50 p-3 text-violet-600 transition hover:bg-violet-100">
-          <Bell size={20} />
+        <button className="rounded-full border border-slate-200 bg-white p-2.5 text-slate-600 transition hover:bg-slate-50">
+          <Mail size={17} />
         </button>
 
-        <button className="rounded-2xl bg-pink-50 p-3 text-pink-500 transition hover:bg-pink-100">
-          <Mail size={20} />
+        <button className="rounded-full border border-slate-200 bg-white p-2.5 text-slate-600 transition hover:bg-slate-50">
+          <Bell size={17} />
         </button>
 
-        <div className="flex items-center gap-3 border-l border-violet-100 pl-5">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-pink-500 font-bold text-white shadow-lg">
-            G
+        <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-1.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-200 font-semibold text-slate-800">
+            TM
           </div>
 
-          <div className="hidden lg:block">
+          <div className="hidden pr-2 lg:block">
             <h4 className="font-semibold text-gray-900">
-              Gemini Team
+              Totok Michael
             </h4>
 
-            <p className="text-sm text-gray-500">
-              Project Manager
+            <p className="text-xs text-gray-500">
+              tmicheal20@mail.com
             </p>
           </div>
         </div>

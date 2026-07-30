@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import TaskForm from "../../components/TaskForm";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
-import { tasks as seededTasks } from "../../data/tasks";
 import { users } from "../../data/users";
+import useTasks from "../../hooks/useTasks";
 import MainLayout from "../../layouts/MainLayout";
 import type { Task } from "../../types/task";
 
@@ -24,34 +24,23 @@ const priorityStyles: Record<Task["priority"], string> = {
 const TaskDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { tasks, isReady, addTask, updateTaskStatus } = useTasks();
 
-  const [taskList, setTaskList] = useState<Task[]>([]);
-  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
-  useEffect(() => {
-    setIsLoading(true);
-    setError(null);
+  const selectedTaskId = id ? Number(id) : null;
 
-    const timer = window.setTimeout(() => {
-      try {
-        setTaskList(seededTasks);
-        setSelectedTaskId(id ? Number(id) : seededTasks[0]?.id ?? null);
-      } catch {
-        setError("We could not load task data. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    }, 450);
+  const currentTask = useMemo(() => {
+    if (!tasks.length) {
+      return undefined;
+    }
 
-    return () => window.clearTimeout(timer);
-  }, [id]);
+    if (!selectedTaskId) {
+      return tasks[0];
+    }
 
-  const currentTask = useMemo(
-    () => taskList.find((task) => task.id === selectedTaskId),
-    [taskList, selectedTaskId]
-  );
+    return tasks.find((task) => task.id === selectedTaskId);
+  }, [tasks, selectedTaskId]);
 
   const assignee = useMemo(
     () => users.find((user) => user.id === currentTask?.assignedTo),
@@ -72,7 +61,7 @@ const TaskDetails = () => {
     return nextStatus ? [currentTask.status, nextStatus] : [currentTask.status];
   }, [currentTask]);
 
-  const updateTaskStatus = (nextStatus: Task["status"]) => {
+  const handleStatusChange = (nextStatus: Task["status"]) => {
     if (!currentTask) {
       return;
     }
@@ -84,29 +73,19 @@ const TaskDetails = () => {
       return;
     }
 
-    setTaskList((previousTasks) =>
-      previousTasks.map((task) =>
-        task.id === currentTask.id ? { ...task, status: nextStatus } : task
-      )
-    );
+    updateTaskStatus(currentTask.id, nextStatus);
   };
 
   const handleCreateTask = (values: Omit<Task, "id" | "projectId">) => {
-    const nextId =
-      taskList.length > 0 ? Math.max(...taskList.map((task) => task.id)) + 1 : 1;
-
-    const newTask: Task = {
-      id: nextId,
-      projectId: currentTask?.projectId ?? 1,
+    const newTask = addTask({
       ...values,
-    };
+      projectId: currentTask?.projectId ?? 1,
+    });
 
-    setTaskList((previousTasks) => [newTask, ...previousTasks]);
-    setSelectedTaskId(newTask.id);
     navigate(`/tasks/${newTask.id}`);
   };
 
-  if (isLoading) {
+  if (!isReady) {
     return (
       <MainLayout>
         <section className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
@@ -138,11 +117,17 @@ const TaskDetails = () => {
     );
   }
 
-  if (!taskList.length) {
+  if (!tasks.length) {
     return (
       <MainLayout>
-        <section className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-          <TaskForm users={users} onSubmit={handleCreateTask} className="mt-6" />
+        <section className="mx-auto max-w-4xl rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm md:p-8">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-slate-900">Create Your First Task</h1>
+            <p className="mt-2 text-sm text-slate-500">
+              Start by adding a task and it will appear on your dashboard.
+            </p>
+          </div>
+          <TaskForm users={users} onSubmit={handleCreateTask} />
         </section>
       </MainLayout>
     );
@@ -187,7 +172,7 @@ const TaskDetails = () => {
               <select
                 value={currentTask.status}
                 onChange={(event) =>
-                  updateTaskStatus(event.target.value as Task["status"])
+                  handleStatusChange(event.target.value as Task["status"])
                 }
                 className="mt-2 w-full rounded-lg border border-emerald-100 bg-white px-3 py-2 text-sm font-medium text-slate-800 outline-none ring-emerald-500 transition focus:ring-2"
               >
