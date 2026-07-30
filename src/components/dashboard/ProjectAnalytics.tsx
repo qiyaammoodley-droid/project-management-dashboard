@@ -19,16 +19,16 @@ const data = [
 
 const ProjectAnalytics = () => {
   return (
-    <Card>
-      <h2 className="text-2xl font-bold text-gray-900">
+    <Card className="border-slate-200">
+      <h2 className="text-2xl font-bold text-slate-900">
         Project Analytics
       </h2>
 
-      <p className="mt-2 text-gray-500">
+      <p className="mt-1 text-sm text-slate-500">
         Weekly project progress
       </p>
 
-      <div className="mt-8 h-72">
+      <div className="mt-5 h-60">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
             <XAxis
@@ -41,8 +41,8 @@ const ProjectAnalytics = () => {
 
             <Bar
               dataKey="progress"
-              radius={[20, 20, 0, 0]}
-              fill="#7C3AED"
+              radius={[16, 16, 16, 16]}
+              fill="#0f7a57"
             />
           </BarChart>
         </ResponsiveContainer>

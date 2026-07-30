@@ -1,6 +1,5 @@
 import {
-  MoreHorizontal,
-  FolderKanban,
+  Plus,
 } from "lucide-react";
 
 import Card from "../ui/Card";
@@ -8,47 +7,48 @@ import Badge from "../ui/Badge";
 
 const projects = [
   {
-    name: "Gemini Dashboard",
-    client: "Internal",
-    progress: 85,
-    status: "In Progress",
-  },
-  {
-    name: "Mobile Banking App",
-    client: "FNB",
+    name: "Alexandra Deff",
+    client: "Working on Github Project Repository",
     progress: 100,
     status: "Completed",
   },
   {
-    name: "E-Commerce Platform",
-    client: "Nike",
+    name: "Edwin Adenike",
+    client: "Working on Integrate User Authentication System",
+    progress: 75,
+    status: "In Progress",
+  },
+  {
+    name: "Isaac Oluwatemiorun",
+    client: "Working on Develop Search and Filter Functionality",
     progress: 40,
     status: "Pending",
   },
   {
-    name: "CRM System",
-    client: "Microsoft",
-    progress: 72,
+    name: "David Oshodi",
+    client: "Working on Responsive Layout for Homepage",
+    progress: 68,
     status: "In Progress",
   },
 ];
 
 const RecentProjects = () => {
   return (
-    <Card>
+    <Card className="border-slate-200">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">
-            Recent Projects
+            Team Collaboration
           </h2>
 
-          <p className="text-gray-500">
-            Latest project activity
+          <p className="text-gray-500 text-sm">
+            Current member tasks
           </p>
         </div>
 
-        <button className="rounded-xl bg-violet-100 p-3 text-violet-700">
-          <FolderKanban size={20} />
+        <button className="inline-flex items-center gap-1 rounded-full border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700">
+          <Plus size={14} />
+          Add Member
         </button>
       </div>
 
@@ -56,44 +56,19 @@ const RecentProjects = () => {
         {projects.map((project) => (
           <div
             key={project.name}
-            className="rounded-2xl border border-violet-100 p-5 transition hover:border-violet-300 hover:shadow-md"
+            className="rounded-2xl border border-slate-200 p-4"
           >
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-semibold text-gray-900">
+                <h3 className="font-semibold text-gray-900 text-sm">
                   {project.name}
                 </h3>
 
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-xs text-gray-500">
                   {project.client}
                 </p>
               </div>
 
-              <button>
-                <MoreHorizontal
-                  size={20}
-                  className="text-gray-400"
-                />
-              </button>
-            </div>
-
-            <div className="mt-5">
-              <div className="mb-2 flex justify-between text-sm">
-                <span>Progress</span>
-                <span>{project.progress}%</span>
-              </div>
-
-              <div className="h-3 overflow-hidden rounded-full bg-violet-100">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-violet-600 to-pink-500"
-                  style={{
-                    width: `${project.progress}%`,
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="mt-5">
               <Badge status={project.status as any} />
             </div>
           </div>

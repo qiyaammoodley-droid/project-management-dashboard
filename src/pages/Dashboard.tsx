@@ -4,8 +4,8 @@ import {
   Users,
   Clock3,
   Plus,
+  Upload,
 } from "lucide-react";
-import { useMemo } from "react";
 
 import MainLayout from "../layouts/MainLayout";
 import PageHeader from "../components/ui/PageHeader";
@@ -21,73 +21,64 @@ import TeamPerformance from "../components/dashboard/TeamPerformance";
 const Dashboard = () => {
   const { tasks } = useTasks();
 
-  const dueThisWeek = useMemo(() => {
-    const now = new Date();
-    const weekFromNow = new Date();
-    weekFromNow.setDate(now.getDate() + 7);
-
-    return tasks.filter((task) => {
-      if (!task.dueDate) {
-        return false;
-      }
-
-      const due = new Date(task.dueDate);
-      return due >= now && due <= weekFromNow;
-    }).length;
-  }, [tasks]);
-
   return (
     <MainLayout>
       <PageHeader
         title="Dashboard"
-        subtitle="Welcome back to Gemini 👋"
+        subtitle="Plan, prioritize, and accomplish your tasks with ease."
         action={
-          <Button>
-            <Plus size={18} />
-            New Project
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button>
+              <Plus size={16} />
+              Add Project
+            </Button>
+            <Button variant="outline">
+              <Upload size={16} />
+              Import Data
+            </Button>
+          </div>
         }
       />
 
-      <section className="grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           featured
-          title="Projects"
+          title="Total Projects"
           value="24"
-          change="+12% this month"
+          change="Increased from last month"
           icon={<FolderKanban size={28} />}
         />
 
         <StatCard
-          title="Tasks"
-          value={tasks.length}
-          change={tasks.length ? "Live task count" : "No tasks yet"}
+          title="Ended Projects"
+          value={10}
+          change="Increased from last month"
           icon={<CheckSquare size={28} />}
         />
 
         <StatCard
-          title="Team Members"
-          value="16"
-          change="+3 new members"
+          title="Running Projects"
+          value="12"
+          change="Increased from last month"
           icon={<Users size={28} />}
         />
 
         <StatCard
-          title="Due This Week"
-          value={dueThisWeek}
-          change={dueThisWeek ? "Upcoming deadlines" : "No upcoming deadlines"}
-          positive={dueThisWeek > 0}
+          title="Pending Project"
+          value={tasks.length}
+          change={tasks.length ? "Live task count" : "On Discuss"}
+          positive
           icon={<Clock3 size={28} />}
         />
       </section>
 
-      <section className="mt-10 grid gap-8 xl:grid-cols-3">
-        <div className="space-y-8 xl:col-span-2">
+      <section className="mt-6 grid gap-4 xl:grid-cols-3">
+        <div className="space-y-4 xl:col-span-2">
           <ProjectAnalytics />
           <RecentProjects />
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-4">
           <TeamPerformance />
           <UpcomingTasks />
         </div>

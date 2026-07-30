@@ -20,7 +20,7 @@ const StatCard = ({
 }: StatCardProps) => {
   return (
     <Card
-      className={`transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+      className={`transition-all duration-300 ${
         featured
           ? "border-0 bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-500 text-white"
           : "bg-white"
@@ -61,7 +61,7 @@ const StatCard = ({
           className={`rounded-2xl p-4 ${
             featured
               ? "bg-white/20 text-white"
-              : "bg-emerald-100 text-emerald-700"
+              : "border border-slate-200 bg-white text-slate-700"
           }`}
         >
           {icon}
