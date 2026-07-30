@@ -21,65 +21,48 @@ const priorityStyles: Record<Task["priority"], string> = {
   High: "border-rose-200 bg-rose-50 text-rose-700",
 };
 
+const statusStyles: Record<Task["status"], string> = {
+  "To Do": "text-slate-600",
+  "In Progress": "text-emerald-700",
+  "In Review": "text-amber-700",
+  Completed: "text-emerald-800",
+};
+
 const TaskDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { tasks, isReady, addTask, updateTaskStatus } = useTasks();
 
   const [error] = useState<string | null>(null);
-
   const selectedTaskId = id ? Number(id) : null;
 
-  const currentTask = useMemo(() => {
-    if (!tasks.length) {
-      return undefined;
-    }
+  const rowTasks = useMemo(() => [...tasks].sort((a, b) => b.id - a.id), [tasks]);
 
-    if (!selectedTaskId) {
-      return tasks[0];
-    }
-
-    return tasks.find((task) => task.id === selectedTaskId);
-  }, [tasks, selectedTaskId]);
-
-  const assignee = useMemo(
-    () => users.find((user) => user.id === currentTask?.assignedTo),
-    [currentTask]
-  );
-
-  const allowedStatuses = useMemo<Task["status"][]>(() => {
-    if (!currentTask) {
-      return STATUS_FLOW;
-    }
-
-    const currentIndex = STATUS_FLOW.indexOf(currentTask.status);
+  const getAllowedStatuses = (task: Task): Task["status"][] => {
+    const currentIndex = STATUS_FLOW.indexOf(task.status);
     if (currentIndex < 0) {
       return STATUS_FLOW;
     }
 
     const nextStatus = STATUS_FLOW[currentIndex + 1];
-    return nextStatus ? [currentTask.status, nextStatus] : [currentTask.status];
-  }, [currentTask]);
+    return nextStatus ? [task.status, nextStatus] : [task.status];
+  };
 
-  const handleStatusChange = (nextStatus: Task["status"]) => {
-    if (!currentTask) {
-      return;
-    }
-
-    const currentIndex = STATUS_FLOW.indexOf(currentTask.status);
+  const handleRowStatusChange = (task: Task, nextStatus: Task["status"]) => {
+    const currentIndex = STATUS_FLOW.indexOf(task.status);
     const nextIndex = STATUS_FLOW.indexOf(nextStatus);
 
     if (nextIndex !== currentIndex && nextIndex !== currentIndex + 1) {
       return;
     }
 
-    updateTaskStatus(currentTask.id, nextStatus);
+    updateTaskStatus(task.id, nextStatus);
   };
 
   const handleCreateTask = (values: Omit<Task, "id" | "projectId">) => {
     const newTask = addTask({
       ...values,
-      projectId: currentTask?.projectId ?? 1,
+      projectId: 1,
     });
 
     navigate(`/tasks/${newTask.id}`);
@@ -105,13 +88,6 @@ const TaskDetails = () => {
         <section className="rounded-2xl border border-red-200 bg-red-50 p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-red-700">Error loading tasks</h2>
           <p className="mt-2 text-sm text-red-600">{error}</p>
-          <button
-            type="button"
-            onClick={() => window.location.reload()}
-            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-          >
-            Retry
-          </button>
         </section>
       </MainLayout>
     );
@@ -124,23 +100,10 @@ const TaskDetails = () => {
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-slate-900">Create Your First Task</h1>
             <p className="mt-2 text-sm text-slate-500">
-              Start by adding a task and it will appear on your dashboard.
+              Start by adding a task and it will appear in rows below.
             </p>
           </div>
           <TaskForm users={users} onSubmit={handleCreateTask} />
-        </section>
-      </MainLayout>
-    );
-  }
-
-  if (!currentTask) {
-    return (
-      <MainLayout>
-        <section className="rounded-2xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-amber-800">Task not found</h2>
-          <p className="mt-2 text-sm text-amber-700">
-            The task you requested does not exist in the current list.
-          </p>
         </section>
       </MainLayout>
     );
@@ -150,74 +113,83 @@ const TaskDetails = () => {
     <MainLayout>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
         <section className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm lg:col-span-3">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h1 className="mt-1 text-2xl font-bold text-slate-900">
-                {currentTask.title}
-              </h1>
-              <p className="mt-2 text-sm text-slate-600">{currentTask.description}</p>
-            </div>
-            <span
-              className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${priorityStyles[currentTask.priority]}`}
-            >
-              {currentTask.priority} Priority
-            </span>
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Status
-              </p>
-              <select
-                value={currentTask.status}
-                onChange={(event) =>
-                  handleStatusChange(event.target.value as Task["status"])
-                }
-                className="mt-2 w-full rounded-lg border border-emerald-100 bg-white px-3 py-2 text-sm font-medium text-slate-800 outline-none ring-emerald-500 transition focus:ring-2"
-              >
-                {allowedStatuses.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="rounded-xl border border-slate-200 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Due Date
-              </p>
-              <p className="mt-2 text-sm font-semibold text-slate-900">
-                {new Date(currentTask.dueDate).toLocaleDateString("en-US", {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-4 rounded-xl border border-slate-200 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Assignee
+          <div className="mb-4">
+            <h1 className="text-2xl font-bold text-slate-900">Task List</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              All added tasks appear here as rows.
             </p>
-            {assignee ? (
-              <div className="mt-3 flex items-center gap-3">
-                <img
-                  src={assignee.avatar}
-                  alt={assignee.name}
-                  className="h-11 w-11 rounded-full border border-emerald-100 object-cover"
-                />
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">{assignee.name}</p>
-                  <p className="text-xs text-slate-500">{assignee.role}</p>
+          </div>
+
+          <div className="hidden grid-cols-12 gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 md:grid">
+            <p className="col-span-4">Task</p>
+            <p className="col-span-3">Assignee</p>
+            <p className="col-span-2">Due Date</p>
+            <p className="col-span-2">Status</p>
+            <p className="col-span-1">Priority</p>
+          </div>
+
+          <div className="mt-3 space-y-2">
+            {rowTasks.map((task) => {
+              const assignee = users.find((user) => user.id === task.assignedTo);
+
+              return (
+                <div
+                  key={task.id}
+                  className={`grid grid-cols-1 gap-3 rounded-xl border px-4 py-3 md:grid-cols-12 md:items-center ${
+                    selectedTaskId === task.id
+                      ? "border-emerald-300 bg-emerald-50/30"
+                      : "border-slate-200 bg-white"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/tasks/${task.id}`)}
+                    className="col-span-4 text-left"
+                  >
+                    <p className="font-semibold text-slate-900">{task.title}</p>
+                    <p className="text-xs text-slate-500 md:hidden">
+                      {assignee?.name || "Unassigned"} · {task.dueDate || "No date"}
+                    </p>
+                  </button>
+
+                  <p className="col-span-3 hidden text-sm text-slate-700 md:block">
+                    {assignee?.name || "Unassigned"}
+                  </p>
+
+                  <p className="col-span-2 hidden text-sm text-slate-700 md:block">
+                    {task.dueDate || "-"}
+                  </p>
+
+                  <div className="col-span-2">
+                    <select
+                      value={task.status}
+                      onChange={(event) =>
+                        handleRowStatusChange(task, event.target.value as Task["status"])
+                      }
+                      className={`w-full rounded-lg border border-emerald-100 bg-white px-2 py-1.5 text-xs font-semibold outline-none ${statusStyles[task.status]}`}
+                    >
+                      {getAllowedStatuses(task).map((status) => (
+                        <option key={`${task.id}-${status}`} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="col-span-1">
+                    <span
+                      className={`inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${priorityStyles[task.priority]}`}
+                    >
+                      {task.priority}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <p className="mt-2 text-sm text-slate-500">-</p>
-            )}
+              );
+            })}
+          </div>
+
+          <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50/40 p-3 text-xs text-emerald-800">
+            Total tasks: {rowTasks.length}
           </div>
         </section>
 

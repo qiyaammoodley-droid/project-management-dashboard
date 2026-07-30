@@ -15,6 +15,7 @@ const AppRouter = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/:id" element={<ProjectDetails />} />
+        <Route path="/tasks" element={<TaskDetails />} />
         <Route path="/tasks/:id" element={<TaskDetails />} />
       </Routes>
     </BrowserRouter>

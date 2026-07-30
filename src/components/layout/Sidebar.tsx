@@ -57,7 +57,7 @@ const Sidebar = () => {
             </NavLink>
 
             <NavLink
-              to="/tasks/1"
+              to="/tasks"
               className={({ isActive }) =>
                 `${navItem} ${isActive ? activeNav : ""}`
               }
