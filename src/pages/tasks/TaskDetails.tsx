@@ -5,6 +5,7 @@ import TaskForm from "../../components/TaskForm";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import { users } from "../../data/users";
 import useTasks from "../../hooks/useTasks";
+import useProjects from "../../hooks/useProjects";
 import MainLayout from "../../layouts/MainLayout";
 import type { Task } from "../../types/task";
 
@@ -32,11 +33,15 @@ const TaskDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { tasks, isReady, addTask, updateTaskStatus } = useTasks();
+  const { projects } = useProjects();
 
   const [error] = useState<string | null>(null);
   const selectedTaskId = id ? Number(id) : null;
 
-  const rowTasks = useMemo(() => [...tasks].sort((a, b) => b.id - a.id), [tasks]);
+  const rowTasks = useMemo(
+    () => [...tasks].sort((a: Task, b: Task) => Number(b.id) - Number(a.id)),
+    [tasks]
+  );
 
   const getAllowedStatuses = (task: Task): Task["status"][] => {
     const currentIndex = STATUS_FLOW.indexOf(task.status);
@@ -56,16 +61,14 @@ const TaskDetails = () => {
       return;
     }
 
-    updateTaskStatus(task.id, nextStatus);
+    const taskId = Number(task.id);
+    updateTaskStatus(taskId, nextStatus);
   };
 
-  const handleCreateTask = (values: Omit<Task, "id" | "projectId">) => {
-    const newTask = addTask({
-      ...values,
-      projectId: 1,
-    });
-
-    navigate(`/tasks/${newTask.id}`);
+  const handleCreateTask = (
+    values: Omit<Task, "id" | "projectId"> & { projectId?: number }
+  ) => {
+    addTask({ ...values });
   };
 
   if (!isReady) {
@@ -103,7 +106,7 @@ const TaskDetails = () => {
               Start by adding a task and it will appear in rows below.
             </p>
           </div>
-          <TaskForm users={users} onSubmit={handleCreateTask} />
+          <TaskForm users={users} projects={projects} onSubmit={handleCreateTask} />
         </section>
       </MainLayout>
     );
@@ -194,7 +197,7 @@ const TaskDetails = () => {
         </section>
 
         <section className="lg:col-span-2">
-          <TaskForm users={users} onSubmit={handleCreateTask} />
+          <TaskForm users={users} projects={projects} onSubmit={handleCreateTask} />
         </section>
       </div>
     </MainLayout>

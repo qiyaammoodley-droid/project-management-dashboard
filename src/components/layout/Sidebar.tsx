@@ -11,7 +11,11 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
+import useTasks from "../../hooks/useTasks";
+
 const Sidebar = () => {
+  const { tasks } = useTasks();
+
   const navItem =
     "group flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium text-slate-500 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700";
 
@@ -70,7 +74,7 @@ const Sidebar = () => {
                   <CheckSquare size={17} />
                   Tasks
                   <span className="ml-auto rounded bg-emerald-600/10 px-1.5 py-0.5 text-[10px] text-emerald-700">
-                    124
+                    {tasks.length}
                   </span>
                 </>
               )}

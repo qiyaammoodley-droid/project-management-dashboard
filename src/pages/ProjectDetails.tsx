@@ -1,13 +1,19 @@
 import { useParams } from "react-router-dom";
 
 import useProjects from "../hooks/useProjects";
+import useTasks from "../hooks/useTasks";
+import TaskForm from "../components/TaskForm";
+import { users } from "../data/users";
 import MainLayout from "../layouts/MainLayout";
 
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { projects, isReady } = useProjects();
+  const { tasks, addTask } = useTasks();
 
-  const project = projects.find((item) => item.id === Number(id));
+  const projectId = Number(id);
+  const project = projects.find((item) => Number(item.id) === projectId);
+  const projectTasks = tasks.filter((task) => Number(task.projectId) === projectId);
 
   if (!isReady) {
     return (
@@ -52,6 +58,32 @@ const ProjectDetails = () => {
             <p className="text-slate-500">Progress</p>
             <p className="font-semibold text-slate-900">{project.progress}%</p>
           </div>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-slate-900">Tasks in this project</h2>
+          <div className="mt-3 space-y-2">
+            {projectTasks.length ? (
+              projectTasks.map((task) => (
+                <div key={task.id} className="rounded-xl border border-slate-200 px-4 py-3">
+                  <p className="font-semibold text-slate-900">{task.title}</p>
+                  <p className="text-sm text-slate-500">Due: {task.dueDate || "No date"}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-slate-500">No tasks yet for this project.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-emerald-100 bg-emerald-50/30 p-5">
+          <h2 className="mb-4 text-lg font-semibold text-slate-900">Add task to this project</h2>
+          <TaskForm
+            users={users}
+            projects={projects}
+            selectedProjectId={Number(project.id)}
+            onSubmit={(values) => addTask({ ...values, projectId: projectId })}
+          />
         </div>
       </section>
     </MainLayout>

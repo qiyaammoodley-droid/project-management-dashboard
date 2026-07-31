@@ -16,7 +16,7 @@ type ProjectInput = {
 	description: string;
 	deadline: string;
 	status?: Project["status"];
-	teamMembers?: number[];
+	teamMembers?: Project["teamMembers"];
 };
 
 type ProjectContextValue = {

@@ -2,13 +2,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import type { Task } from "../types/task";
 import type { User } from "../types/user";
+import type { Project } from "../types/project";
 
 type TaskFormValues = Omit<Task, "id" | "projectId">;
 
 type TaskFormProps = {
   users: User[];
+  projects?: Project[];
+  selectedProjectId?: number;
   initialValues?: Partial<TaskFormValues>;
-  onSubmit: (values: TaskFormValues) => void;
+  onSubmit: (values: TaskFormValues & { projectId?: number }) => void;
   submitLabel?: string;
   className?: string;
 };
@@ -24,6 +27,8 @@ const defaultValues: TaskFormValues = {
 
 const TaskForm = ({
   users,
+  projects = [],
+  selectedProjectId,
   initialValues,
   onSubmit,
   submitLabel = "Create Task",
@@ -38,6 +43,14 @@ const TaskForm = ({
 
   const [formValues, setFormValues] = useState<TaskFormValues>(startingValues);
   const [error, setError] = useState<string>("");
+  const [projectId, setProjectId] = useState<number | "">(
+    selectedProjectId !== undefined
+      ? Number(selectedProjectId)
+      : projects[0]?.id !== undefined
+      ? Number(projects[0].id)
+      : ""
+  );
+  const [success, setSuccess] = useState<string>("");
 
   useEffect(() => {
     titleInputRef.current?.focus();
@@ -53,11 +66,27 @@ const TaskForm = ({
     }
 
     setError("");
+    setSuccess("Task added successfully.");
     onSubmit({
       ...formValues,
       title: formValues.title.trim(),
-      description: formValues.description.trim(),
+      description: (formValues.description || "").trim(),
+      projectId: projectId === "" ? undefined : Number(projectId),
     });
+
+    setFormValues({
+      ...defaultValues,
+      status: formValues.status,
+      priority: formValues.priority,
+      assignedTo: formValues.assignedTo,
+      dueDate: "",
+      description: "",
+      title: "",
+    });
+
+    if (titleInputRef.current) {
+      titleInputRef.current.value = "";
+    }
   };
 
   return (
@@ -78,7 +107,33 @@ const TaskForm = ({
         </div>
       ) : null}
 
+      {success ? (
+        <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+          {success}
+        </div>
+      ) : null}
+
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {projects.length > 0 ? (
+          <label className="flex flex-col gap-1 md:col-span-2">
+            <span className="text-sm font-medium text-slate-700">Project</span>
+            <select
+              value={projectId}
+              onChange={(event) =>
+                setProjectId(event.target.value === "" ? "" : Number(event.target.value))
+              }
+              className="rounded-lg border border-emerald-100 bg-white px-3 py-2 outline-none ring-emerald-500 transition focus:ring-2"
+            >
+              <option value="">No project</option>
+              {projects.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+
         <label className="flex flex-col gap-1">
           <span className="text-sm font-medium text-slate-700">Task Title</span>
           <input
