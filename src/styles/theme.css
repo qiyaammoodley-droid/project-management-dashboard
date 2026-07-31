@@ -1,0 +1,102 @@
+/* ---------------------------------------------------------------------
+   Theme tokens — green & gray, as specified for the group project.
+   Metaphor: progress-as-growth. The progress bar reads like a stem
+   gaining rings, and the activity feed reads like a vine with leaf
+   markers — a deliberate, restrained nod to "growth" rather than a
+   generic dashboard skin.
+   --------------------------------------------------------------------- */
+
+:root {
+  /* Greens */
+  --forest-900: #12211b;
+  --forest-700: #1f4738;
+  --green-600: #2f7a5c;
+  --green-500: #3e9d77;
+  --green-400: #63b795;
+  --green-100: #e4f3ec;
+
+  /* Grays */
+  --gray-900: #21262b;
+  --gray-700: #454c53;
+  --gray-500: #7a828a;
+  --gray-300: #d8dcdf;
+  --gray-200: #e9ebec;
+  --gray-100: #f4f5f6;
+  --white: #ffffff;
+
+  /* Status */
+  --status-overdue: #b3542f;
+  --status-due-soon: #b8862f;
+  --status-upcoming: var(--green-600);
+  --status-done: var(--green-600);
+
+  /* Type */
+  --font-ui: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+
+  /* Layout */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-card: 0 1px 2px rgba(18, 33, 27, 0.06), 0 8px 24px -12px rgba(18, 33, 27, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  background: var(--gray-100);
+  color: var(--gray-900);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--green-400);
+  color: var(--white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--green-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
