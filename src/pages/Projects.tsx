@@ -1,15 +1,36 @@
-import { Link, useNavigate } from "react-router-dom";
-import { CalendarDays, FolderKanban, Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
 
 import useProjects from "../hooks/useProjects";
 import MainLayout from "../layouts/MainLayout";
 import PageHeader from "../components/ui/PageHeader";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
+import SearchInput from "../components/ui/SearchInput";
+import StatusFilter from "../components/projects/StatusFilter";
+import ProjectCard from "../components/projects/ProjectCard";
+import type { StatusFilterOption } from "../types/project";
 
 const Projects = () => {
   const navigate = useNavigate();
   const { projects, isReady } = useProjects();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilterOption>("All");
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter((project) => {
+      const matchesSearch = project.name
+        .toLowerCase()
+        .includes(searchTerm.trim().toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "All" || project.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [projects, searchTerm, statusFilter]);
 
   return (
     <MainLayout>
@@ -24,6 +45,15 @@ const Projects = () => {
         }
       />
 
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <SearchInput
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Search projects by name..."
+        />
+        <StatusFilter value={statusFilter} onChange={setStatusFilter} />
+      </div>
+
       {!isReady ? (
         <Card className="border-emerald-100">
           <p className="text-sm text-slate-600">Loading projects...</p>
@@ -34,54 +64,22 @@ const Projects = () => {
           <p className="mt-2 text-sm text-slate-500">
             Create a project first, then add tasks under that project.
           </p>
-          <Link
-            to="/projects/new"
-            className="mt-5 inline-flex rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
-          >
+          <Button onClick={() => navigate("/projects/new")} className="mt-5">
             Create Project
-          </Link>
+          </Button>
+        </Card>
+      ) : !filteredProjects.length ? (
+        <Card className="border-emerald-100">
+          <h2 className="text-xl font-semibold text-slate-900">No matching projects</h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Try a different search term or status filter.
+          </p>
         </Card>
       ) : (
-        <section className="grid gap-4 md:grid-cols-2">
-          {projects.map((project) => {
-            return (
-              <Card
-                key={project.id}
-                className="border-emerald-100 p-5 hover:shadow-emerald-100"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-semibold text-slate-900">{project.name}</h3>
-                    <p className="mt-1 text-sm text-slate-500">
-                      {project.description || "No description"}
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    {project.status}
-                  </span>
-                </div>
-
-                <div className="mt-4 space-y-2 text-sm text-slate-600">
-                  <div className="flex items-center gap-2">
-                    <FolderKanban size={15} className="text-emerald-600" />
-                    <span>Progress: {project.progress}%</span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <CalendarDays size={15} className="text-emerald-600" />
-                    <span>{project.deadline || "No deadline"}</span>
-                  </div>
-                </div>
-
-                <Link
-                  to={`/projects/${project.id}`}
-                  className="mt-5 inline-flex text-sm font-semibold text-emerald-700 underline"
-                >
-                  Open Project
-                </Link>
-              </Card>
-            );
-          })}
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {filteredProjects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
         </section>
       )}
     </MainLayout>
