@@ -29,6 +29,22 @@ const statusStyles: Record<Task["status"], string> = {
   Completed: "text-emerald-800",
 };
 
+const formatShortDate = (value?: string) => {
+  if (!value) {
+    return "-";
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "-";
+  }
+
+  return parsed.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+  });
+};
+
 const TaskDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -125,10 +141,10 @@ const TaskDetails = () => {
 
           <div className="hidden grid-cols-12 gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 md:grid">
             <p className="col-span-4">Task</p>
-            <p className="col-span-3">Assignee</p>
+            <p className="col-span-2">Assignee</p>
             <p className="col-span-2">Due Date</p>
             <p className="col-span-2">Status</p>
-            <p className="col-span-1">Priority</p>
+            <p className="col-span-2">Priority</p>
           </div>
 
           <div className="mt-3 space-y-2">
@@ -151,19 +167,19 @@ const TaskDetails = () => {
                   >
                     <p className="font-semibold text-slate-900">{task.title}</p>
                     <p className="text-xs text-slate-500 md:hidden">
-                      {assignee?.name || "Unassigned"} · {task.dueDate || "No date"}
+                      {assignee?.name || "Unassigned"} · {formatShortDate(task.dueDate)}
                     </p>
                   </button>
 
-                  <p className="col-span-3 hidden text-sm text-slate-700 md:block">
+                  <p className="col-span-2 hidden text-sm text-slate-700 md:block">
                     {assignee?.name || "Unassigned"}
                   </p>
 
                   <p className="col-span-2 hidden text-sm text-slate-700 md:block">
-                    {task.dueDate || "-"}
+                    {formatShortDate(task.dueDate)}
                   </p>
 
-                  <div className="col-span-2">
+                  <div className="col-span-2 min-w-0">
                     <select
                       value={task.status}
                       onChange={(event) =>
@@ -179,9 +195,9 @@ const TaskDetails = () => {
                     </select>
                   </div>
 
-                  <div className="col-span-1">
+                  <div className="col-span-2 min-w-0 md:text-right">
                     <span
-                      className={`inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${priorityStyles[task.priority]}`}
+                      className={`inline-flex whitespace-nowrap rounded-full border px-2 py-1 text-[11px] font-semibold ${priorityStyles[task.priority]}`}
                     >
                       {task.priority}
                     </span>

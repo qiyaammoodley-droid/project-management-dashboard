@@ -6,6 +6,22 @@ import TaskForm from "../components/TaskForm";
 import { users } from "../data/users";
 import MainLayout from "../layouts/MainLayout";
 
+const formatShortDate = (value?: string) => {
+  if (!value) {
+    return "-";
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "-";
+  }
+
+  return parsed.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+  });
+};
+
 const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { projects, isReady } = useProjects();
@@ -67,7 +83,7 @@ const ProjectDetails = () => {
               projectTasks.map((task) => (
                 <div key={task.id} className="rounded-xl border border-slate-200 px-4 py-3">
                   <p className="font-semibold text-slate-900">{task.title}</p>
-                  <p className="text-sm text-slate-500">Due: {task.dueDate || "No date"}</p>
+                  <p className="text-sm text-slate-500">Due: {formatShortDate(task.dueDate)}</p>
                 </div>
               ))
             ) : (
