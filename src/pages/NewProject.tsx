@@ -7,6 +7,14 @@ import PageHeader from "../components/ui/PageHeader";
 import Button from "../components/ui/Button";
 import useProjects from "../hooks/useProjects";
 
+const teamOptions = [
+  "Noluthando Moloi",
+  "Qiyaam Moodley",
+  "Nyiko Vumani",
+  "Thandokuhle Maphanga",
+  "Tswarelo Madonsela",
+];
+
 const NewProject = () => {
   const navigate = useNavigate();
   const { addProject } = useProjects();
@@ -14,7 +22,16 @@ const NewProject = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
   const [error, setError] = useState("");
+
+  const handleCheckboxChange = (member: string) => {
+    if (selectedTeam.includes(member)) {
+      setSelectedTeam(selectedTeam.filter((m) => m !== member));
+    } else {
+      setSelectedTeam([...selectedTeam, member]);
+    }
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,7 +48,7 @@ const NewProject = () => {
       description: description.trim(),
       deadline,
       status: "To Do",
-      teamMembers: [],
+      teamMembers: selectedTeam,
     });
 
     navigate("/projects");
@@ -41,7 +58,7 @@ const NewProject = () => {
     <MainLayout>
       <PageHeader
         title="Add Project"
-        subtitle="Create a project first, then add tasks under it"
+        subtitle="Create a project, assign your AI team, and add tasks under it"
       />
 
       <section className="max-w-2xl rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
@@ -58,7 +75,7 @@ const NewProject = () => {
               value={name}
               onChange={(event) => setName(event.target.value)}
               className="w-full rounded-xl border border-emerald-100 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500"
-              placeholder="e.g. Marketing Website Revamp"
+              placeholder="e.g. AI Model Pipeline Revamp"
             />
           </label>
 
@@ -83,7 +100,25 @@ const NewProject = () => {
             />
           </label>
 
-          <div className="flex justify-end">
+          {/* Team Member Selection */}
+          <div>
+            <span className="mb-2 block text-sm font-medium text-slate-700">Assign Team Members</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-xl border border-emerald-100 p-3 bg-slate-50/50">
+              {teamOptions.map((member) => (
+                <label key={member} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedTeam.includes(member)}
+                    onChange={() => handleCheckboxChange(member)}
+                    className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                  />
+                  {member}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-2">
             <Button type="submit">Create Project</Button>
           </div>
         </form>
