@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Dashboard from "../pages/Dashboard";
+import Analytics from "../pages/Analytics";
 import CalendarPage from "../pages/Calendar";
 import NewProject from "../pages/NewProject";
 import Projects from "../pages/Projects";
@@ -11,10 +12,10 @@ const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirect the home page to the dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/analytics" element={<Analytics />} />
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/projects/new" element={<NewProject />} />
         <Route path="/projects" element={<Projects />} />

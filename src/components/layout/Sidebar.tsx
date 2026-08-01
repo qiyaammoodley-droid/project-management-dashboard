@@ -97,11 +97,24 @@ const Sidebar = () => {
               )}
             </NavLink>
 
-            <button className={`${navItem} w-full`}>
-              <span className="h-5 w-1 rounded-full bg-transparent" />
-              <BarChart3 size={17} />
-              Analytics
-            </button>
+            <NavLink
+  to="/analytics"
+  className={({ isActive }) =>
+    `${navItem} ${isActive ? activeNav : ""}`
+  }
+>
+  {({ isActive }) => (
+    <>
+      <span
+        className={`h-5 w-1 rounded-full ${
+          isActive ? "bg-emerald-600" : "bg-transparent"
+        }`}
+      />
+      <BarChart3 size={17} />
+      Analytics
+    </>
+  )}
+</NavLink>
 
             <NavLink
               to="/team"
