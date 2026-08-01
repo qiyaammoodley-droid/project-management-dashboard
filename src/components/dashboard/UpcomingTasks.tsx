@@ -9,7 +9,11 @@ import useTasks from "../../hooks/useTasks";
 import Card from "../ui/Card";
 
 const UpcomingTasks = () => {
-  const { tasks, isReady } = useTasks();
+  const {
+    tasks,
+    isReady,
+    toggleTaskComplete,
+  } = useTasks();
 
   const upcomingTasks = tasks.slice(0, 4);
 
@@ -31,11 +35,13 @@ const UpcomingTasks = () => {
         </div>
       ) : !upcomingTasks.length ? (
         <div className="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-4 text-sm text-slate-700">
-          No tasks yet. Create one from the
-          <Link to="/tasks/1" className="ml-1 font-semibold text-emerald-700 underline">
-            task page
+          No tasks yet.
+          <Link
+            to="/tasks/1"
+            className="ml-1 font-semibold text-emerald-700 underline"
+          >
+            Create one
           </Link>
-          .
         </div>
       ) : (
         <div className="space-y-4">
@@ -45,20 +51,31 @@ const UpcomingTasks = () => {
               className="flex items-center justify-between rounded-2xl border border-emerald-100 p-4 transition hover:border-emerald-300 hover:shadow-md"
             >
               <div className="flex items-center gap-4">
-                {task.status === "Completed" ? (
-                  <CheckCircle2
-                    size={22}
-                    className="text-emerald-600"
-                  />
-                ) : (
-                  <Circle
-                    size={22}
-                    className="text-emerald-500"
-                  />
-                )}
+                <button
+                  onClick={() => toggleTaskComplete(task.id)}
+                  className="transition hover:scale-110"
+                >
+                  {task.status === "Completed" ? (
+                    <CheckCircle2
+                      size={22}
+                      className="text-emerald-600"
+                    />
+                  ) : (
+                    <Circle
+                      size={22}
+                      className="text-emerald-500"
+                    />
+                  )}
+                </button>
 
                 <div>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3
+                    className={`font-semibold ${
+                      task.status === "Completed"
+                        ? "text-gray-400 line-through"
+                        : "text-gray-900"
+                    }`}
+                  >
                     {task.title}
                   </h3>
 

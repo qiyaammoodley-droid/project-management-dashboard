@@ -11,14 +11,15 @@ import type { ReactNode } from "react";
 import { tasks as initialTasks } from "../data/tasks";
 import type { Task } from "../types/task";
 
-type TaskInput = Omit<Task, "id" | "projectId"> & { projectId?: number };
+type TaskInput = Omit<Task, "id" | "projectId"> & { projectId?: number | string };
 
 type TaskContextValue = {
   tasks: Task[];
   isReady: boolean;
   addTask: (task: TaskInput) => Task;
-  updateTaskStatus: (taskId: number, status: Task["status"]) => void;
-  getTaskById: (taskId: number) => Task | undefined;
+  updateTaskStatus: (taskId: number | string, status: Task["status"]) => void;
+  toggleTaskComplete: (taskId: number | string) => void;
+  getTaskById: (taskId: number | string) => Task | undefined;
 };
 
 const STORAGE_KEY = "project_dashboard_tasks";
@@ -31,10 +32,10 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEY);
+
       if (stored) {
-        const parsed = JSON.parse(stored) as Task[];
-        setTasks(parsed);
+        setTasks(JSON.parse(stored));
       } else {
         setTasks(initialTasks);
       }
@@ -46,15 +47,13 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (!isReady) {
-      return;
-    }
+    if (!isReady) return;
 
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   }, [tasks, isReady]);
 
   const addTask = useCallback((taskInput: TaskInput): Task => {
-    const nextTask: Task = {
+    const newTask: Task = {
       id: Date.now(),
       projectId: taskInput.projectId ?? 1,
       title: taskInput.title,
@@ -63,29 +62,71 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       status: taskInput.status,
       assignedTo: taskInput.assignedTo,
       dueDate: taskInput.dueDate,
+      createdAt: new Date().toISOString(),
     };
 
-    setTasks((current) => [nextTask, ...current]);
-    return nextTask;
+    setTasks((current) => [newTask, ...current]);
+
+    return newTask;
   }, []);
 
-  const updateTaskStatus = useCallback((taskId: number, status: Task["status"]) => {
+  const updateTaskStatus = useCallback(
+    (taskId: number | string, status: Task["status"]) => {
+      setTasks((current) =>
+        current.map((task) =>
+          task.id === taskId ? { ...task, status } : task
+        )
+      );
+    },
+    []
+  );
+
+  const toggleTaskComplete = useCallback((taskId: number | string) => {
     setTasks((current) =>
-      current.map((task) => (task.id === taskId ? { ...task, status } : task))
+      current.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              status:
+                task.status === "Completed"
+                  ? "To Do"
+                  : "Completed",
+            }
+          : task
+      )
     );
   }, []);
 
   const getTaskById = useCallback(
-    (taskId: number) => tasks.find((task) => task.id === taskId),
+    (taskId: number | string) =>
+      tasks.find((task) => task.id === taskId),
     [tasks]
   );
 
-  const value = useMemo<TaskContextValue>(
-    () => ({ tasks, isReady, addTask, updateTaskStatus, getTaskById }),
-    [tasks, isReady, addTask, updateTaskStatus, getTaskById]
+  const value = useMemo(
+    () => ({
+      tasks,
+      isReady,
+      addTask,
+      updateTaskStatus,
+      toggleTaskComplete,
+      getTaskById,
+    }),
+    [
+      tasks,
+      isReady,
+      addTask,
+      updateTaskStatus,
+      toggleTaskComplete,
+      getTaskById,
+    ]
   );
 
-  return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
+  return (
+    <TaskContext.Provider value={value}>
+      {children}
+    </TaskContext.Provider>
+  );
 };
 
 export const useTaskContext = () => {

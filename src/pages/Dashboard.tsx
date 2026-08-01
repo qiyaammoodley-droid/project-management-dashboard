@@ -6,6 +6,7 @@ import {
   Plus,
   Upload,
 } from "lucide-react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
@@ -13,7 +14,6 @@ import PageHeader from "../components/ui/PageHeader";
 import Button from "../components/ui/Button";
 import StatCard from "../components/ui/StatCard";
 import useProjects from "../hooks/useProjects";
-import useTasks from "../hooks/useTasks";
 
 import ProjectAnalytics from "../components/dashboard/ProjectAnalytics";
 import RecentProjects from "../components/dashboard/RecentProjects";
@@ -22,8 +22,42 @@ import TeamPerformance from "../components/dashboard/TeamPerformance";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { projects } = useProjects();
-  const { tasks } = useTasks();
+
+  const { projects, importProjects } = useProjects();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelected = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      try {
+        const importedProjects = JSON.parse(
+          reader.result as string
+        );
+
+        importProjects(importedProjects);
+
+        alert(
+          `${importedProjects.length} projects imported successfully.`
+        );
+      } catch {
+        alert("Invalid JSON file.");
+      }
+    };
+
+    reader.readAsText(file);
+  };
 
   return (
     <MainLayout>
@@ -36,10 +70,22 @@ const Dashboard = () => {
               <Plus size={16} />
               Add Project
             </Button>
-            <Button variant="outline">
+
+            <Button
+              variant="outline"
+              onClick={handleImportClick}
+            >
               <Upload size={16} />
               Import Data
             </Button>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json,.csv"
+              className="hidden"
+              onChange={handleFileSelected}
+            />
           </div>
         }
       />
@@ -49,29 +95,43 @@ const Dashboard = () => {
           featured
           title="Total Projects"
           value={projects.length}
-          change={projects.length ? "Live project count" : "No projects yet"}
+          change="Live project count"
           icon={<FolderKanban size={28} />}
         />
 
         <StatCard
-          title="Ended Projects"
-          value={10}
-          change="Increased from last month"
+          title="Completed Projects"
+          value={
+            projects.filter(
+              (project) => project.status === "Completed"
+            ).length
+          }
+          change="Completed successfully"
           icon={<CheckSquare size={28} />}
         />
 
         <StatCard
           title="Running Projects"
-          value="12"
-          change="Increased from last month"
+          value={
+            projects.filter(
+              (project) => project.status === "In Progress"
+            ).length
+          }
+          change="Currently active"
           icon={<Users size={28} />}
         />
 
         <StatCard
-          title="Pending Project"
-          value={tasks.length}
-          change={tasks.length ? "Live task count" : "On Discuss"}
-          positive
+          title="Pending Projects"
+          value={
+            projects.filter(
+              (project) =>
+                project.status === "To Do" ||
+                project.status === "In Review"
+            ).length
+          }
+          change="Awaiting completion"
+          positive={false}
           icon={<Clock3 size={28} />}
         />
       </section>
