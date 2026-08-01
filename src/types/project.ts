@@ -10,5 +10,6 @@ export interface Project {
   status: ProjectStatus;
   progress: number;
   deadline?: string;
-  teamMembers: Array<{ id: number; name: string; role?: string }>;
+  teamMembers: String[];
 }
+
