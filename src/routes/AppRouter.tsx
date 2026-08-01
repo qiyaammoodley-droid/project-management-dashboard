@@ -7,6 +7,8 @@ import NewProject from "../pages/NewProject";
 import Projects from "../pages/Projects";
 import ProjectDetails from "../pages/ProjectDetails";
 import TaskDetails from "../pages/tasks/TaskDetails";
+import SettingsPage from "../pages/Settings";
+import Help from "../pages/Help";
 
 const AppRouter = () => {
   return (
@@ -22,6 +24,8 @@ const AppRouter = () => {
         <Route path="/projects/:id" element={<ProjectDetails />} />
         <Route path="/tasks" element={<TaskDetails />} />
         <Route path="/tasks/:id" element={<TaskDetails />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/help" element={<Help />} />
       </Routes>
     </BrowserRouter>
   );

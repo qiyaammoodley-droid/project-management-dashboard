@@ -159,23 +159,56 @@ const Sidebar = () => {
           </p>
 
           <div className="space-y-1.5">
-            <button className={`${navItem} w-full`}>
-              <span className="h-5 w-1 rounded-full bg-transparent" />
-              <Settings size={17} />
-              Settings
-            </button>
+            <NavLink
+  to="/settings"
+  className={({ isActive }) =>
+    `${navItem} ${isActive ? activeNav : ""}`
+  }
+>
+  {({ isActive }) => (
+    <>
+      <span
+        className={`h-5 w-1 rounded-full ${
+          isActive ? "bg-emerald-600" : "bg-transparent"
+        }`}
+      />
+      <Settings size={17} />
+      Settings
+    </>
+  )}
+</NavLink>
 
-            <button className={`${navItem} w-full`}>
-              <span className="h-5 w-1 rounded-full bg-transparent" />
-              <HelpCircle size={17} />
-              Help
-            </button>
+           <NavLink
+  to="/help"
+  className={({ isActive }) =>
+    `${navItem} ${isActive ? activeNav : ""}`
+  }
+>
+  {({ isActive }) => (
+    <>
+      <span
+        className={`h-5 w-1 rounded-full ${
+          isActive ? "bg-emerald-600" : "bg-transparent"
+        }`}
+      />
+      <HelpCircle size={17} />
+      Help
+    </>
+  )}
+</NavLink>
 
-            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 font-medium text-slate-500 transition-all duration-200 hover:bg-slate-100">
-              <span className="h-5 w-1 rounded-full bg-transparent" />
-              <LogOut size={17} />
-              Logout
-            </button>
+            <NavLink
+  to="/dashboard"
+  onClick={() => {
+    localStorage.clear();
+    alert("Logged out successfully.");
+  }}
+  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 font-medium text-slate-500 transition-all duration-200 hover:bg-slate-100"
+>
+  <span className="h-5 w-1 rounded-full bg-transparent" />
+  <LogOut size={17} />
+  Logout
+</NavLink>
           </div>
         </div>
       </div>
