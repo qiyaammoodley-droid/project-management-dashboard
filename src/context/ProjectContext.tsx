@@ -23,6 +23,7 @@ type ProjectContextValue = {
   projects: Project[];
   isReady: boolean;
   addProject: (projectInput: ProjectInput) => Project;
+  deleteProject: (projectId: number | string) => void;
   importProjects: (projects: Project[]) => void;
   getProjectById: (projectId: number | string) => Project | undefined;
 };
@@ -77,6 +78,12 @@ export const ProjectProvider = ({
     return project;
   }, []);
 
+  const deleteProject = useCallback((projectId: number | string) => {
+    setProjects((current) =>
+      current.filter((project) => Number(project.id) !== Number(projectId))
+    );
+  }, []);
+
   const importProjects = useCallback((newProjects: Project[]) => {
     setProjects(newProjects);
   }, []);
@@ -92,10 +99,11 @@ export const ProjectProvider = ({
       projects,
       isReady,
       addProject,
+      deleteProject,
       importProjects,
       getProjectById,
     }),
-    [projects, isReady, addProject, importProjects, getProjectById]
+    [projects, isReady, addProject, deleteProject, importProjects, getProjectById]
   );
 
   return (

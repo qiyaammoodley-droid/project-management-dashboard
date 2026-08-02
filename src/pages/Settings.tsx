@@ -1,15 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import PageHeader from "../components/ui/PageHeader";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
+import useProfile from "../hooks/useProfile";
 
 const Settings = () => {
-  const [name, setName] = useState("Totok Michael");
-  const [email, setEmail] = useState("tmicheal20@mail.com");
+  const { profile, isReady, updateProfile } = useProfile();
+
+  const [name, setName] = useState(profile.name);
+  const [email, setEmail] = useState(profile.email);
   const [notifications, setNotifications] = useState(true);
 
+  useEffect(() => {
+    if (!isReady) {
+      return;
+    }
+
+    setName(profile.name);
+    setEmail(profile.email);
+  }, [isReady, profile.name, profile.email]);
+
   const handleSave = () => {
+    if (!name.trim() || !email.trim()) {
+      alert("Name and email are required.");
+      return;
+    }
+
+    updateProfile({
+      name,
+      email,
+    });
+
     alert("Settings saved successfully!");
   };
 

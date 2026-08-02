@@ -6,7 +6,7 @@ import PageHeader from "../components/ui/PageHeader";
 import Button from "../components/ui/Button";
 
 const initialTeam = [
-  { id: 1, name: "Noluthando Moloi", role: "AI Engineer", email: "noluthando@donezo.com" },
+  { id: 1, name: "Noluthando Molui", role: "AI Engineer", email: "noluthando@donezo.com" },
   { id: 2, name: "Qiyaam Moodley", role: "AI Engineer", email: "qiyaam@donezo.com" },
   { id: 3, name: "Nyiko Vumani", role: "AI Engineer", email: "nyiko@donezo.com" },
   { id: 4, name: "Thandokuhle Maphanga", role: "AI Engineer", email: "thandokuhle@donezo.com" },

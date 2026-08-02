@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import useProjects from "../hooks/useProjects";
 import useTasks from "../hooks/useTasks";
@@ -23,13 +23,38 @@ const formatShortDate = (value?: string) => {
 };
 
 const ProjectDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { projects, isReady } = useProjects();
-  const { tasks, addTask } = useTasks();
+  const { projects, isReady, deleteProject } = useProjects();
+  const { tasks, addTask, deleteTask, deleteTasksByProjectId } = useTasks();
 
   const projectId = Number(id);
   const project = projects.find((item) => Number(item.id) === projectId);
   const projectTasks = tasks.filter((task) => Number(task.projectId) === projectId);
+
+  const handleDeleteProject = () => {
+    const shouldDelete = window.confirm(
+      "Delete this project? All tasks linked to it will also be deleted."
+    );
+
+    if (!shouldDelete || !project) {
+      return;
+    }
+
+    deleteProject(project.id);
+    deleteTasksByProjectId(project.id);
+    navigate("/projects");
+  };
+
+  const handleDeleteTask = (taskId: number | string) => {
+    const shouldDelete = window.confirm("Delete this task from project?");
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    deleteTask(taskId);
+  };
 
   if (!isReady) {
     return (
@@ -54,7 +79,17 @@ const ProjectDetails = () => {
   return (
     <MainLayout>
       <section className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-900">{project.name}</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-2xl font-bold text-slate-900">{project.name}</h1>
+          <button
+            type="button"
+            onClick={handleDeleteProject}
+            className="rounded-full border border-rose-200 px-4 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50"
+          >
+            Delete Project
+          </button>
+        </div>
+
         <p className="mt-2 text-sm text-slate-600">
           {project.description || "No description"}
         </p>
@@ -81,9 +116,22 @@ const ProjectDetails = () => {
           <div className="mt-3 space-y-2">
             {projectTasks.length ? (
               projectTasks.map((task) => (
-                <div key={task.id} className="rounded-xl border border-slate-200 px-4 py-3">
-                  <p className="font-semibold text-slate-900">{task.title}</p>
-                  <p className="text-sm text-slate-500">Due: {formatShortDate(task.dueDate)}</p>
+                <div
+                  key={task.id}
+                  className="flex items-start justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3"
+                >
+                  <div>
+                    <p className="font-semibold text-slate-900">{task.title}</p>
+                    <p className="text-sm text-slate-500">Due: {formatShortDate(task.dueDate)}</p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteTask(task.id)}
+                    className="rounded-full border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 transition hover:bg-rose-50"
+                  >
+                    Delete
+                  </button>
                 </div>
               ))
             ) : (

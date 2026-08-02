@@ -17,6 +17,8 @@ type TaskContextValue = {
   tasks: Task[];
   isReady: boolean;
   addTask: (task: TaskInput) => Task;
+  deleteTask: (taskId: number | string) => void;
+  deleteTasksByProjectId: (projectId: number | string) => void;
   updateTaskStatus: (taskId: number | string, status: Task["status"]) => void;
   toggleTaskComplete: (taskId: number | string) => void;
   getTaskById: (taskId: number | string) => Task | undefined;
@@ -70,6 +72,18 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     return newTask;
   }, []);
 
+  const deleteTask = useCallback((taskId: number | string) => {
+    setTasks((current) =>
+      current.filter((task) => Number(task.id) !== Number(taskId))
+    );
+  }, []);
+
+  const deleteTasksByProjectId = useCallback((projectId: number | string) => {
+    setTasks((current) =>
+      current.filter((task) => Number(task.projectId) !== Number(projectId))
+    );
+  }, []);
+
   const updateTaskStatus = useCallback(
     (taskId: number | string, status: Task["status"]) => {
       setTasks((current) =>
@@ -108,6 +122,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       tasks,
       isReady,
       addTask,
+      deleteTask,
+      deleteTasksByProjectId,
       updateTaskStatus,
       toggleTaskComplete,
       getTaskById,
@@ -116,6 +132,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       tasks,
       isReady,
       addTask,
+      deleteTask,
+      deleteTasksByProjectId,
       updateTaskStatus,
       toggleTaskComplete,
       getTaskById,

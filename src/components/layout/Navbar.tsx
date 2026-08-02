@@ -6,6 +6,7 @@ import {
   Search,
   ChevronDown,
 } from "lucide-react";
+import useProfile from "../../hooks/useProfile";
 
 type NavbarProps = {
   onMenuClick?: () => void;
@@ -15,28 +16,17 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
   const [showMail, setShowMail] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const { profile } = useProfile();
 
-  const [user, setUser] = useState({
-    initials: "TM",
-    name: "Totok Michael",
-    email: "tmicheal20@mail.com",
-  });
+  const initials = profile.name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("") || "U";
 
   const switchAccount = () => {
-    if (user.initials === "TM") {
-      setUser({
-        initials: "GP",
-        name: "Gemini Project",
-        email: "gemini@dashboard.com",
-      });
-    } else {
-      setUser({
-        initials: "TM",
-        name: "Totok Michael",
-        email: "tmicheal20@mail.com",
-      });
-    }
-
+    alert("Account switching is not enabled in this demo.");
     setShowProfile(false);
   };
 
@@ -142,16 +132,16 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
             className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-2 py-1 sm:gap-3 sm:px-3 sm:py-1.5"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-200 text-xs font-semibold sm:h-9 sm:w-9 sm:text-sm">
-              {user.initials}
+              {initials}
             </div>
 
             <div className="hidden xl:block text-left">
               <h4 className="font-semibold">
-                {user.name}
+                {profile.name}
               </h4>
 
               <p className="text-xs text-gray-500">
-                {user.email}
+                {profile.email}
               </p>
             </div>
 

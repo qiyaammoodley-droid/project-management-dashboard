@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 
 import useProjects from "../hooks/useProjects";
+import useTasks from "../hooks/useTasks";
 import MainLayout from "../layouts/MainLayout";
 import PageHeader from "../components/ui/PageHeader";
 import Card from "../components/ui/Card";
@@ -14,10 +15,24 @@ import type { StatusFilterOption } from "../types/project";
 
 const Projects = () => {
   const navigate = useNavigate();
-  const { projects, isReady } = useProjects();
+  const { projects, isReady, deleteProject } = useProjects();
+  const { deleteTasksByProjectId } = useTasks();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilterOption>("All");
+
+  const handleDeleteProject = (projectId: number | string) => {
+    const shouldDelete = window.confirm(
+      "Delete this project? All tasks linked to it will also be deleted."
+    );
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    deleteProject(projectId);
+    deleteTasksByProjectId(projectId);
+  };
 
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
@@ -82,7 +97,11 @@ const Projects = () => {
       ) : (
         <section className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2 xl:grid-cols-3">
           {filteredProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onDelete={handleDeleteProject}
+            />
           ))}
         </section>
       )}

@@ -8,7 +8,7 @@ import Button from "../components/ui/Button";
 import useProjects from "../hooks/useProjects";
 
 const teamOptions = [
-  "Noluthando Moloi",
+  "Noluthando Molui",
   "Qiyaam Moodley",
   "Nyiko Vumani",
   "Thandokuhle Maphanga",

@@ -8,9 +8,10 @@ import type { Project } from "../../types/project";
 
 interface ProjectCardProps {
   project: Project;
+  onDelete?: (projectId: number | string) => void;
 }
 
-const ProjectCard = ({ project }: ProjectCardProps) => {
+const ProjectCard = ({ project, onDelete }: ProjectCardProps) => {
   return (
     <Card className="flex flex-col justify-between border-emerald-100 p-5 transition-shadow hover:shadow-md hover:shadow-emerald-100/50">
       <div>
@@ -46,12 +47,22 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
         </div>
       </div>
 
-      <Link
-        to={`/projects/${project.id}`}
-        className="mt-5 inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-800 hover:underline"
-      >
-        Open Project &rarr;
-      </Link>
+      <div className="mt-5 flex items-center justify-between gap-3">
+        <Link
+          to={`/projects/${project.id}`}
+          className="inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-800 hover:underline"
+        >
+          Open Project &rarr;
+        </Link>
+
+        <button
+          type="button"
+          onClick={() => onDelete?.(project.id)}
+          className="rounded-full border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 transition hover:bg-rose-50"
+        >
+          Delete
+        </button>
+      </div>
     </Card>
   );
 };

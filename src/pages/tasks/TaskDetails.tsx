@@ -48,7 +48,7 @@ const formatShortDate = (value?: string) => {
 const TaskDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { tasks, isReady, addTask, updateTaskStatus } = useTasks();
+  const { tasks, isReady, addTask, deleteTask, updateTaskStatus } = useTasks();
   const { projects } = useProjects();
 
   const [error] = useState<string | null>(null);
@@ -85,6 +85,16 @@ const TaskDetails = () => {
     values: Omit<Task, "id" | "projectId"> & { projectId?: number }
   ) => {
     addTask({ ...values });
+  };
+
+  const handleDeleteTask = (taskId: number | string) => {
+    const shouldDelete = window.confirm("Delete this task?");
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    deleteTask(taskId);
   };
 
   if (!isReady) {
@@ -130,8 +140,8 @@ const TaskDetails = () => {
 
   return (
     <MainLayout>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-5 lg:gap-6">
-        <section className="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm sm:p-5 lg:col-span-3 lg:p-6">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-5 xl:gap-6">
+        <section className="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm sm:p-5 xl:col-span-3 xl:p-6">
           <div className="mb-4">
             <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">Task List</h1>
             <p className="mt-1 text-sm text-slate-500">
@@ -139,22 +149,14 @@ const TaskDetails = () => {
             </p>
           </div>
 
-          <div className="hidden grid-cols-12 gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 md:grid">
-            <p className="col-span-4">Task</p>
-            <p className="col-span-2">Assignee</p>
-            <p className="col-span-2">Due Date</p>
-            <p className="col-span-2">Status</p>
-            <p className="col-span-2">Priority</p>
-          </div>
-
-          <div className="mt-3 space-y-2">
+          <div className="mt-3 space-y-2 xl:hidden">
             {rowTasks.map((task) => {
               const assignee = users.find((user) => user.id === task.assignedTo);
 
               return (
                 <div
                   key={task.id}
-                  className={`grid grid-cols-1 gap-2 rounded-xl border px-3 py-3 sm:px-4 md:grid-cols-12 md:items-center md:gap-3 ${
+                  className={`grid grid-cols-1 gap-2 rounded-xl border px-3 py-3 sm:px-4 ${
                     selectedTaskId === task.id
                       ? "border-emerald-300 bg-emerald-50/30"
                       : "border-slate-200 bg-white"
@@ -163,29 +165,21 @@ const TaskDetails = () => {
                   <button
                     type="button"
                     onClick={() => navigate(`/tasks/${task.id}`)}
-                    className="col-span-4 text-left"
+                    className="text-left"
                   >
                     <p className="font-semibold text-slate-900">{task.title}</p>
-                    <p className="text-xs text-slate-500 md:hidden">
+                    <p className="text-xs text-slate-500">
                       {assignee?.name || "Unassigned"} · {formatShortDate(task.dueDate)}
                     </p>
                   </button>
 
-                  <p className="col-span-2 hidden text-sm text-slate-700 md:block">
-                    {assignee?.name || "Unassigned"}
-                  </p>
-
-                  <p className="col-span-2 hidden text-sm text-slate-700 md:block">
-                    {formatShortDate(task.dueDate)}
-                  </p>
-
-                  <div className="col-span-2 min-w-0 md:max-w-[180px]">
+                  <div className="min-w-0">
                     <select
                       value={task.status}
                       onChange={(event) =>
                         handleRowStatusChange(task, event.target.value as Task["status"])
                       }
-                      className={`w-full rounded-lg border border-emerald-100 bg-white px-2 py-1.5 text-xs font-semibold outline-none md:text-[11px] ${statusStyles[task.status]}`}
+                      className={`w-full rounded-lg border border-emerald-100 bg-white px-2 py-1.5 text-xs font-semibold outline-none ${statusStyles[task.status]}`}
                     >
                       {getAllowedStatuses(task).map((status) => (
                         <option key={`${task.id}-${status}`} value={status}>
@@ -195,16 +189,107 @@ const TaskDetails = () => {
                     </select>
                   </div>
 
-                  <div className="col-span-2 min-w-0 md:text-right">
+                  <div className="flex min-w-0 items-center gap-2">
                     <span
                       className={`inline-flex whitespace-nowrap rounded-full border px-2 py-1 text-[11px] font-semibold ${priorityStyles[task.priority]}`}
                     >
                       {task.priority}
                     </span>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteTask(task.id)}
+                      className="rounded-full border border-rose-200 px-2 py-1 text-[11px] font-semibold text-rose-600 transition hover:bg-rose-50"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               );
             })}
+          </div>
+
+          <div className="mt-3 hidden xl:block">
+            <div className="overflow-x-auto rounded-xl border border-slate-200">
+              <table className="min-w-[760px] w-full table-fixed bg-white">
+                <thead>
+                  <tr className="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <th className="px-4 py-3 text-left w-[32%]">Task</th>
+                    <th className="px-3 py-3 text-left w-[20%]">Assignee</th>
+                    <th className="px-3 py-3 text-left w-[14%]">Due Date</th>
+                    <th className="px-3 py-3 text-left w-[20%]">Status</th>
+                    <th className="px-3 py-3 text-left w-[14%]">Priority</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {rowTasks.map((task) => {
+                    const assignee = users.find((user) => user.id === task.assignedTo);
+
+                    return (
+                      <tr
+                        key={task.id}
+                        className={`border-t border-slate-200 align-middle ${
+                          selectedTaskId === task.id ? "bg-emerald-50/40" : "bg-white"
+                        }`}
+                      >
+                        <td className="px-4 py-3">
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/tasks/${task.id}`)}
+                            className="line-clamp-2 text-left font-semibold text-slate-900 hover:text-emerald-700"
+                          >
+                            {task.title}
+                          </button>
+                        </td>
+
+                        <td className="truncate px-3 py-3 text-sm text-slate-700">
+                          {assignee?.name || "Unassigned"}
+                        </td>
+
+                        <td className="px-3 py-3 text-sm text-slate-700">
+                          {formatShortDate(task.dueDate)}
+                        </td>
+
+                        <td className="px-3 py-3">
+                          <select
+                            value={task.status}
+                            onChange={(event) =>
+                              handleRowStatusChange(task, event.target.value as Task["status"])
+                            }
+                            className={`w-full rounded-lg border border-emerald-100 bg-white px-2 py-1.5 text-xs font-semibold outline-none ${statusStyles[task.status]}`}
+                          >
+                            {getAllowedStatuses(task).map((status) => (
+                              <option key={`${task.id}-${status}`} value={status}>
+                                {status}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+
+                        <td className="px-3 py-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <span
+                              className={`inline-flex whitespace-nowrap rounded-full border px-2 py-1 text-[11px] font-semibold ${priorityStyles[task.priority]}`}
+                            >
+                              {task.priority}
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteTask(task.id)}
+                              className="rounded-full border border-rose-200 px-2 py-1 text-[11px] font-semibold text-rose-600 transition hover:bg-rose-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50/40 p-3 text-xs text-emerald-800">
@@ -212,7 +297,7 @@ const TaskDetails = () => {
           </div>
         </section>
 
-        <section className="lg:col-span-2">
+        <section className="xl:col-span-2">
           <TaskForm users={users} projects={projects} onSubmit={handleCreateTask} />
         </section>
       </div>
