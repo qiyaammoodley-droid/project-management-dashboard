@@ -1,5 +1,6 @@
 export type TaskStatus = "To Do" | "In Progress" | "In Review" | "Completed";
 export type TaskPriority = "Low" | "Medium" | "High";
+export type TaskRecurrence = "None" | "Daily" | "Weekly" | "Monthly";
 
 export interface Task {
   id: number | string;
@@ -8,6 +9,8 @@ export interface Task {
   description?: string;
   status: TaskStatus;
   priority: TaskPriority;
+  recurrence?: TaskRecurrence;
+  recurrenceCount?: number;
   assignedTo?: number;
   dueDate?: string;
   createdAt?: string;

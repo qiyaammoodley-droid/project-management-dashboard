@@ -21,6 +21,8 @@ const defaultValues: TaskFormValues = {
   description: "",
   priority: "Medium",
   status: "To Do",
+  recurrence: "None",
+  recurrenceCount: 1,
   assignedTo: 0,
   dueDate: "",
 };
@@ -71,6 +73,10 @@ const TaskForm = ({
       ...formValues,
       title: formValues.title.trim(),
       description: (formValues.description || "").trim(),
+      recurrenceCount:
+        formValues.recurrence && formValues.recurrence !== "None"
+          ? Math.max(1, Number(formValues.recurrenceCount || 1))
+          : 1,
       projectId: projectId === "" ? undefined : Number(projectId),
     });
 
@@ -78,6 +84,8 @@ const TaskForm = ({
       ...defaultValues,
       status: formValues.status,
       priority: formValues.priority,
+      recurrence: "None",
+      recurrenceCount: 1,
       assignedTo: formValues.assignedTo,
       dueDate: "",
       description: "",
@@ -219,6 +227,48 @@ const TaskForm = ({
             <option value="Completed">Completed</option>
           </select>
         </label>
+
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-medium text-slate-700">Recurrence</span>
+          <select
+            value={formValues.recurrence || "None"}
+            onChange={(event) =>
+              setFormValues((current) => ({
+                ...current,
+                recurrence: event.target.value as Task["recurrence"],
+                recurrenceCount:
+                  event.target.value === "None"
+                    ? 1
+                    : Math.max(2, Number(current.recurrenceCount || 2)),
+              }))
+            }
+            className="rounded-lg border border-emerald-100 bg-white px-3 py-2 outline-none ring-emerald-500 transition focus:ring-2"
+          >
+            <option value="None">None</option>
+            <option value="Daily">Daily</option>
+            <option value="Weekly">Weekly</option>
+            <option value="Monthly">Monthly</option>
+          </select>
+        </label>
+
+        {formValues.recurrence && formValues.recurrence !== "None" ? (
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-medium text-slate-700">Occurrences</span>
+            <input
+              type="number"
+              min={2}
+              max={30}
+              value={Number(formValues.recurrenceCount || 2)}
+              onChange={(event) =>
+                setFormValues((current) => ({
+                  ...current,
+                  recurrenceCount: Math.max(2, Math.min(30, Number(event.target.value || 2))),
+                }))
+              }
+              className="rounded-lg border border-emerald-100 px-3 py-2 outline-none ring-emerald-500 transition focus:ring-2"
+            />
+          </label>
+        ) : null}
 
         <label className="flex flex-col gap-1 md:col-span-2">
           <span className="text-sm font-medium text-slate-700">Assignee</span>

@@ -26,6 +26,32 @@ type TaskContextValue = {
 
 const STORAGE_KEY = "project_dashboard_tasks";
 
+const shiftDateByRecurrence = (
+  sourceDate: string,
+  recurrence: Task["recurrence"],
+  offset: number
+) => {
+  const base = new Date(sourceDate);
+
+  if (Number.isNaN(base.getTime())) {
+    return sourceDate;
+  }
+
+  if (recurrence === "Daily") {
+    base.setDate(base.getDate() + offset);
+  }
+
+  if (recurrence === "Weekly") {
+    base.setDate(base.getDate() + offset * 7);
+  }
+
+  if (recurrence === "Monthly") {
+    base.setMonth(base.getMonth() + offset);
+  }
+
+  return base.toISOString().slice(0, 10);
+};
+
 const TaskContext = createContext<TaskContextValue | undefined>(undefined);
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
@@ -55,21 +81,36 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   }, [tasks, isReady]);
 
   const addTask = useCallback((taskInput: TaskInput): Task => {
-    const newTask: Task = {
-      id: Date.now(),
-      projectId: taskInput.projectId ?? 1,
-      title: taskInput.title,
-      description: taskInput.description,
-      priority: taskInput.priority,
-      status: taskInput.status,
-      assignedTo: taskInput.assignedTo,
-      dueDate: taskInput.dueDate,
-      createdAt: new Date().toISOString(),
-    };
+    const occurrenceCount =
+      taskInput.recurrence && taskInput.recurrence !== "None" && taskInput.dueDate
+        ? Math.max(1, Number(taskInput.recurrenceCount || 1))
+        : 1;
 
-    setTasks((current) => [newTask, ...current]);
+    const baseId = Date.now();
 
-    return newTask;
+    const generatedTasks: Task[] = Array.from(
+      { length: occurrenceCount },
+      (_, index) => ({
+        id: baseId - index,
+        projectId: taskInput.projectId ?? 1,
+        title: taskInput.title,
+        description: taskInput.description,
+        priority: taskInput.priority,
+        status: taskInput.status,
+        recurrence: taskInput.recurrence ?? "None",
+        recurrenceCount: taskInput.recurrenceCount ?? 1,
+        assignedTo: taskInput.assignedTo,
+        dueDate:
+          taskInput.dueDate && taskInput.recurrence && taskInput.recurrence !== "None"
+            ? shiftDateByRecurrence(taskInput.dueDate, taskInput.recurrence, index)
+            : taskInput.dueDate,
+        createdAt: new Date().toISOString(),
+      })
+    );
+
+    setTasks((current) => [...generatedTasks, ...current]);
+
+    return generatedTasks[0];
   }, []);
 
   const deleteTask = useCallback((taskId: number | string) => {

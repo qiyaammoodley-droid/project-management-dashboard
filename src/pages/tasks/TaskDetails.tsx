@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import TaskForm from "../../components/TaskForm";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
@@ -47,17 +47,41 @@ const formatShortDate = (value?: string) => {
 
 const TaskDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
   const { tasks, isReady, addTask, deleteTask, updateTaskStatus } = useTasks();
   const { projects } = useProjects();
 
   const [error] = useState<string | null>(null);
   const selectedTaskId = id ? Number(id) : null;
+  const activeQuery = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return (params.get("q") || "").trim().toLowerCase();
+  }, [location.search]);
 
   const rowTasks = useMemo(
     () => [...tasks].sort((a: Task, b: Task) => Number(b.id) - Number(a.id)),
     [tasks]
   );
+
+  const filteredTasks = useMemo(() => {
+    if (!activeQuery) {
+      return rowTasks;
+    }
+
+    return rowTasks.filter((task) => {
+      const assigneeName =
+        users.find((user) => user.id === task.assignedTo)?.name.toLowerCase() || "";
+
+      return (
+        task.title.toLowerCase().includes(activeQuery) ||
+        (task.description || "").toLowerCase().includes(activeQuery) ||
+        task.status.toLowerCase().includes(activeQuery) ||
+        task.priority.toLowerCase().includes(activeQuery) ||
+        assigneeName.includes(activeQuery)
+      );
+    });
+  }, [activeQuery, rowTasks]);
 
   const getAllowedStatuses = (task: Task): Task["status"][] => {
     const currentIndex = STATUS_FLOW.indexOf(task.status);
@@ -149,8 +173,23 @@ const TaskDetails = () => {
             </p>
           </div>
 
+          {activeQuery ? (
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-emerald-100 bg-emerald-50/40 px-3 py-2 text-xs text-emerald-800">
+              <p>
+                Filtered by: <span className="font-semibold">{activeQuery}</span>
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate("/tasks")}
+                className="rounded-full border border-emerald-200 px-3 py-1 font-semibold hover:bg-emerald-100"
+              >
+                Clear
+              </button>
+            </div>
+          ) : null}
+
           <div className="mt-3 space-y-2 xl:hidden">
-            {rowTasks.map((task) => {
+            {filteredTasks.map((task) => {
               const assignee = users.find((user) => user.id === task.assignedTo);
 
               return (
@@ -223,7 +262,7 @@ const TaskDetails = () => {
                 </thead>
 
                 <tbody>
-                  {rowTasks.map((task) => {
+                  {filteredTasks.map((task) => {
                     const assignee = users.find((user) => user.id === task.assignedTo);
 
                     return (
@@ -293,7 +332,7 @@ const TaskDetails = () => {
           </div>
 
           <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50/40 p-3 text-xs text-emerald-800">
-            Total tasks: {rowTasks.length}
+            Total tasks: {filteredTasks.length}
           </div>
         </section>
 
