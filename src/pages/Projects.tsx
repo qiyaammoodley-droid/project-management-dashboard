@@ -38,20 +38,24 @@ const Projects = () => {
         title="Projects"
         subtitle="Create and manage your project containers"
         action={
-          <Button onClick={() => navigate("/projects/new")}>
+          <Button onClick={() => navigate("/projects/new")} className="w-full sm:w-auto">
             <Plus size={16} />
             Add Project
           </Button>
         }
       />
 
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <SearchInput
-          value={searchTerm}
-          onChange={setSearchTerm}
-          placeholder="Search projects by name..."
-        />
-        <StatusFilter value={statusFilter} onChange={setStatusFilter} />
+      <div className="mb-5 flex flex-col gap-3">
+        <div className="w-full">
+          <SearchInput
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="Search projects by name..."
+          />
+        </div>
+        <div className="w-full sm:w-auto">
+          <StatusFilter value={statusFilter} onChange={setStatusFilter} />
+        </div>
       </div>
 
       {!isReady ? (
@@ -76,7 +80,7 @@ const Projects = () => {
           </p>
         </Card>
       ) : (
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <section className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2 xl:grid-cols-3">
           {filteredProjects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}

@@ -99,8 +99,8 @@ const CalendarPage = () => {
       />
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm xl:col-span-2">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm sm:p-4 xl:col-span-2 xl:p-5">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 sm:gap-3">
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -109,7 +109,7 @@ const CalendarPage = () => {
                     (current) => new Date(current.getFullYear(), current.getMonth() - 1, 1)
                   )
                 }
-                className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-slate-50"
+                className="rounded-lg border border-slate-200 p-1.5 text-slate-600 hover:bg-slate-50 sm:p-2"
               >
                 <ChevronLeft size={16} />
               </button>
@@ -121,18 +121,18 @@ const CalendarPage = () => {
                     (current) => new Date(current.getFullYear(), current.getMonth() + 1, 1)
                   )
                 }
-                className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-slate-50"
+                className="rounded-lg border border-slate-200 p-1.5 text-slate-600 hover:bg-slate-50 sm:p-2"
               >
                 <ChevronRight size={16} />
               </button>
             </div>
 
-            <h2 className="text-xl font-semibold text-slate-900">
+            <h2 className="text-base font-semibold text-slate-900 sm:text-xl">
               {monthCursor.toLocaleString("en-US", { month: "long", year: "numeric" })}
             </h2>
           </div>
 
-          <div className="mb-2 grid grid-cols-7 gap-2">
+          <div className="mb-2 grid grid-cols-7 gap-1 sm:gap-2">
             {dayLabels.map((label) => (
               <div key={label} className="text-center text-xs font-semibold uppercase text-slate-400">
                 {label}
@@ -140,13 +140,13 @@ const CalendarPage = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {monthMeta.cells.map((cell) => {
               if (!cell.isCurrentMonth) {
                 return (
                   <div
                     key={cell.key}
-                    className="min-h-[84px] rounded-xl border border-transparent bg-slate-50/50"
+                    className="min-h-[64px] rounded-lg border border-transparent bg-slate-50/50 sm:min-h-[84px] sm:rounded-xl"
                   />
                 );
               }
@@ -159,19 +159,19 @@ const CalendarPage = () => {
                   type="button"
                   key={cell.key}
                   onClick={() => setSelectedDateKey(cell.key)}
-                  className={`min-h-[84px] rounded-xl border p-2 text-left transition ${
+                  className={`min-h-[64px] rounded-lg border p-1.5 text-left transition sm:min-h-[84px] sm:rounded-xl sm:p-2 ${
                     isSelected
                       ? "border-emerald-300 bg-emerald-50"
                       : "border-slate-200 bg-white hover:border-emerald-200"
                   }`}
                 >
-                  <p className="text-sm font-semibold text-slate-800">{cell.day}</p>
+                  <p className="text-xs font-semibold text-slate-800 sm:text-sm">{cell.day}</p>
                   {dayTaskCount > 0 ? (
-                    <span className="mt-2 inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+                    <span className="mt-1 inline-flex rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 sm:mt-2 sm:px-2 sm:text-xs">
                       {dayTaskCount} task{dayTaskCount > 1 ? "s" : ""}
                     </span>
                   ) : (
-                    <p className="mt-2 text-xs text-slate-400">No tasks</p>
+                    <p className="mt-1 text-[10px] text-slate-400 sm:mt-2 sm:text-xs">No tasks</p>
                   )}
                 </button>
               );
@@ -179,7 +179,7 @@ const CalendarPage = () => {
           </div>
         </div>
 
-        <aside className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+        <aside className="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm sm:p-5">
           <h3 className="text-lg font-semibold text-slate-900">Task Panel</h3>
 
           <div className="mt-4 space-y-3">

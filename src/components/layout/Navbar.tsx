@@ -2,11 +2,16 @@ import { useState } from "react";
 import {
   Bell,
   Mail,
+  Menu,
   Search,
   ChevronDown,
 } from "lucide-react";
 
-const Navbar = () => {
+type NavbarProps = {
+  onMenuClick?: () => void;
+};
+
+const Navbar = ({ onMenuClick }: NavbarProps) => {
   const [showMail, setShowMail] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -36,10 +41,19 @@ const Navbar = () => {
   };
 
   return (
-    <header className="flex h-20 items-center justify-between border-b border-emerald-50 bg-white px-5 md:px-8">
+    <header className="flex h-16 items-center justify-between gap-2 border-b border-emerald-50 bg-white px-3 sm:gap-3 sm:px-4 md:h-20 md:px-8">
+
+      <button
+        type="button"
+        onClick={onMenuClick}
+        className="rounded-full border border-slate-200 bg-white p-2 text-slate-700 lg:hidden"
+        aria-label="Open menu"
+      >
+        <Menu size={17} />
+      </button>
 
       {/* Search */}
-      <div className="relative w-full max-w-lg">
+      <div className="relative hidden w-full max-w-lg sm:block">
         <Search
           size={18}
           className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
@@ -48,15 +62,19 @@ const Navbar = () => {
         <input
           type="text"
           placeholder="Search task..."
-          className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-24 text-sm outline-none transition focus:border-emerald-400"
+          className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-2.5 pl-11 pr-20 text-sm outline-none transition focus:border-emerald-400 md:py-3 md:pr-24"
         />
 
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-500">
+        <span className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-500 md:block">
           Ctrl F
         </span>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="ml-auto flex items-center gap-2 sm:gap-3 md:gap-4">
+
+        <button className="rounded-full border border-slate-200 bg-white p-2.5 text-slate-600 transition hover:bg-slate-50 sm:hidden">
+          <Search size={17} />
+        </button>
 
         {/* Mail */}
         <div className="relative">
@@ -66,7 +84,7 @@ const Navbar = () => {
               setShowNotifications(false);
               setShowProfile(false);
             }}
-            className="rounded-full border border-slate-200 bg-white p-2.5 hover:bg-slate-100"
+            className="rounded-full border border-slate-200 bg-white p-2 hover:bg-slate-100 sm:p-2.5"
           >
             <Mail size={17} />
           </button>
@@ -92,7 +110,7 @@ const Navbar = () => {
               setShowMail(false);
               setShowProfile(false);
             }}
-            className="rounded-full border border-slate-200 bg-white p-2.5 hover:bg-slate-100"
+            className="rounded-full border border-slate-200 bg-white p-2 hover:bg-slate-100 sm:p-2.5"
           >
             <Bell size={17} />
           </button>
@@ -121,13 +139,13 @@ const Navbar = () => {
               setShowMail(false);
               setShowNotifications(false);
             }}
-            className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-1.5"
+            className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-2 py-1 sm:gap-3 sm:px-3 sm:py-1.5"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-200 font-semibold">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-200 text-xs font-semibold sm:h-9 sm:w-9 sm:text-sm">
               {user.initials}
             </div>
 
-            <div className="hidden lg:block text-left">
+            <div className="hidden xl:block text-left">
               <h4 className="font-semibold">
                 {user.name}
               </h4>

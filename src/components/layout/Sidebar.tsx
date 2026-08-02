@@ -13,8 +13,18 @@ import { NavLink } from "react-router-dom";
 
 import useTasks from "../../hooks/useTasks";
 
-const Sidebar = () => {
+type SidebarProps = {
+  mode?: "desktop" | "mobile";
+  onNavigate?: () => void;
+};
+
+const Sidebar = ({ mode = "desktop", onNavigate }: SidebarProps) => {
   const { tasks } = useTasks();
+
+  const rootClass =
+    mode === "mobile"
+      ? "flex h-full w-[250px] flex-col justify-between border-r border-slate-100 bg-white p-4"
+      : "flex h-full w-[250px] flex-col justify-between border-r border-slate-100 bg-white p-5";
 
   const navItem =
     "group flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium text-slate-500 transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700";
@@ -23,7 +33,7 @@ const Sidebar = () => {
     "bg-emerald-50 text-emerald-700";
 
   return (
-    <aside className="flex h-full w-[250px] flex-col justify-between border-r border-slate-100 bg-white p-5">
+    <aside className={rootClass}>
       {/* Logo */}
       <div>
         <div className="mb-10 flex items-center gap-3 px-2">
@@ -45,6 +55,7 @@ const Sidebar = () => {
           <nav className="space-y-2">
             <NavLink
               to="/dashboard"
+              onClick={onNavigate}
               className={({ isActive }) =>
                 `${navItem} ${isActive ? activeNav : ""}`
               }
@@ -62,6 +73,7 @@ const Sidebar = () => {
 
             <NavLink
               to="/tasks"
+              onClick={onNavigate}
               className={({ isActive }) =>
                 `${navItem} ${isActive ? activeNav : ""}`
               }
@@ -82,6 +94,7 @@ const Sidebar = () => {
 
             <NavLink
               to="/calendar"
+              onClick={onNavigate}
               className={({ isActive }) =>
                 `${navItem} ${isActive ? activeNav : ""}`
               }
@@ -99,6 +112,7 @@ const Sidebar = () => {
 
             <NavLink
   to="/analytics"
+  onClick={onNavigate}
   className={({ isActive }) =>
     `${navItem} ${isActive ? activeNav : ""}`
   }
@@ -118,6 +132,7 @@ const Sidebar = () => {
 
             <NavLink
               to="/team"
+              onClick={onNavigate}
               className={({ isActive }) =>
                 `${navItem} ${isActive ? activeNav : ""}`
               }
@@ -135,6 +150,7 @@ const Sidebar = () => {
 
             <NavLink
               to="/projects"
+              onClick={onNavigate}
               className={({ isActive }) =>
                 `${navItem} ${isActive ? activeNav : ""}`
               }
@@ -161,6 +177,7 @@ const Sidebar = () => {
           <div className="space-y-1.5">
             <NavLink
   to="/settings"
+  onClick={onNavigate}
   className={({ isActive }) =>
     `${navItem} ${isActive ? activeNav : ""}`
   }
@@ -180,6 +197,7 @@ const Sidebar = () => {
 
            <NavLink
   to="/help"
+  onClick={onNavigate}
   className={({ isActive }) =>
     `${navItem} ${isActive ? activeNav : ""}`
   }
@@ -201,6 +219,7 @@ const Sidebar = () => {
   to="/dashboard"
   onClick={() => {
     localStorage.clear();
+    onNavigate?.();
     alert("Logged out successfully.");
   }}
   className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 font-medium text-slate-500 transition-all duration-200 hover:bg-slate-100"

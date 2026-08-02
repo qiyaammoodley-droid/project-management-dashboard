@@ -65,8 +65,8 @@ const Dashboard = () => {
         title="Dashboard"
         subtitle="Plan, prioritize, and accomplish your tasks with ease."
         action={
-          <div className="flex items-center gap-3">
-            <Button onClick={() => navigate("/projects/new")}>
+          <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+            <Button onClick={() => navigate("/projects/new")} className="w-full sm:w-auto">
               <Plus size={16} />
               Add Project
             </Button>
@@ -74,6 +74,7 @@ const Dashboard = () => {
             <Button
               variant="outline"
               onClick={handleImportClick}
+              className="w-full sm:w-auto"
             >
               <Upload size={16} />
               Import Data

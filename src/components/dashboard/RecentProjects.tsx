@@ -33,7 +33,7 @@ const RecentProjects = () => {
 
   const projectMembers = projects.flatMap((project) =>
     project.teamMembers.map((member) => ({
-      name: member.name,
+      name: String(member),
       client: project.name,
       status: (
         project.status === "To Do"
